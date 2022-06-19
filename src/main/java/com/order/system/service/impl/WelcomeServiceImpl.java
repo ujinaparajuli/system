@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +49,9 @@ public class WelcomeServiceImpl implements WelcomeService{
 	
 	@Autowired
 	SimpMessagingTemplate messagingTemplate;
+	
+	@Autowired
+    JavaMailSender javaMailSender;
 
 	@Override
 	public List<Item> getFoodItems() {
@@ -250,5 +255,36 @@ public class WelcomeServiceImpl implements WelcomeService{
 		
 	}
 
-	
+	@Override
+	public void orderReady(String orderId) {
+		Long id = Long.parseLong(orderId);
+		
+		Optional<Order> optionalOrder = orderDao.findById(id);
+		if(optionalOrder.isPresent()) {
+			Order order = optionalOrder.get();
+			order.setStatus("READY");
+			
+			orderDao.save(order);
+			Optional<User> optionalUser = userDao.findById(order.getUserId());
+			if(optionalUser.isPresent()) {
+				sendEmailToUser(optionalUser.get());
+			}
+			
+		}
+		
+	}
+
+	private void sendEmailToUser(User user) {
+		try {
+			SimpleMailMessage msg = new SimpleMailMessage();
+	        msg.setTo(user.getEmail());
+
+	        msg.setSubject("Order Ready");
+	        msg.setText("Hello " + user.getFirstName() + " " + "\n Your order is ready to pick");
+
+	        javaMailSender.send(msg);
+		} catch (Exception e) {
+			System.out.println("Not able to send email " + e.toString());
+		}	
+	}
 }
