@@ -28,5 +28,6 @@ public interface WelcomeService {
 	
 	// Chef
 	public List<OrderDTO> getAllOrders();
+	public void orderReady(String orderId);
 
 }
