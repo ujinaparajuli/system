@@ -5,6 +5,7 @@ import java.util.List;
 import com.order.system.entity.Cart;
 import com.order.system.entity.Item;
 import com.order.system.entity.User;
+import com.order.system.model.AdminViewDTO;
 import com.order.system.model.Checkout;
 import com.order.system.model.ItemCart;
 import com.order.system.model.OrderDTO;
@@ -29,5 +30,8 @@ public interface WelcomeService {
 	// Chef
 	public List<OrderDTO> getAllOrders();
 	public void orderReady(String orderId);
+	
+	//Admin
+	public List<AdminViewDTO> getMenuAndItemForAdmin();
 
 }

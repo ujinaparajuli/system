@@ -22,6 +22,7 @@ import com.order.system.entity.Item;
 import com.order.system.entity.Menu;
 import com.order.system.entity.Order;
 import com.order.system.entity.User;
+import com.order.system.model.AdminViewDTO;
 import com.order.system.model.Checkout;
 import com.order.system.model.ItemCart;
 import com.order.system.model.OrderDTO;
@@ -286,5 +287,34 @@ public class WelcomeServiceImpl implements WelcomeService{
 		} catch (Exception e) {
 			System.out.println("Not able to send email " + e.toString());
 		}	
+	}
+
+	@Override
+	public List<AdminViewDTO> getMenuAndItemForAdmin() {
+		List<Item> items = itemDao.findAll();
+		List<AdminViewDTO> adminViews = new ArrayList<AdminViewDTO>();
+		for(Item item : items) {
+			AdminViewDTO adminview = new AdminViewDTO();
+			adminview.setItemId(item.getId());
+			adminview.setImg(item.getImg());
+			adminview.setMenuId(item.getMenuId());
+			adminview.setMenuName(getMenuNameFromId(item.getMenuId()));
+			adminview.setPrice(item.getPrice());
+			adminview.setSummary(item.getSummary());
+			adminview.setTitle(item.getTitle());
+			adminview.setType(item.getType());
+			
+			adminViews.add(adminview);
+			
+		}
+		
+		return adminViews;
+		
+	}
+
+	private String getMenuNameFromId(Long menuId) {
+		Optional<Menu> optionalMenu = menuDao.findById(menuId);
+		
+		return optionalMenu.isPresent() ? optionalMenu.get().getCategory() : null;
 	}
 }
