@@ -3,8 +3,12 @@ package com.order.system.service.impl;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -316,5 +320,25 @@ public class WelcomeServiceImpl implements WelcomeService{
 		Optional<Menu> optionalMenu = menuDao.findById(menuId);
 		
 		return optionalMenu.isPresent() ? optionalMenu.get().getCategory() : null;
+	}
+
+	@Override
+	public List<Item> searchItem(String text) {
+		List<Item> searchItems = itemDao.searchByText(text);
+		return itemDao.searchByText(text);
+	}
+	
+	@Override
+	public List<String> getCategoryNameFromMenus(List<Item> searchItems){
+		List<String> list = new ArrayList();
+		Set<String> menuNames = new HashSet<String>();
+		for(Item item:searchItems) {
+			String menuName	= getMenuNameFromId(item.getMenuId());
+			menuNames.add(menuName);
+		}
+		
+		
+		list.addAll(menuNames);
+		return list;
 	}
 }

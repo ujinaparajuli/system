@@ -18,6 +18,8 @@ public interface WelcomeService {
 	public List<cartDTO> viewCart(List<ItemCart> itemsInSession);
 	public void checkout(Double grandTotal);
 	
+	public List<Item> searchItem(String text);
+	
 	//public List<User> getUsers();
 	
 	public List<String> getAllMenuCategory();
@@ -33,5 +35,7 @@ public interface WelcomeService {
 	
 	//Admin
 	public List<AdminViewDTO> getMenuAndItemForAdmin();
+	
+	
 
 }

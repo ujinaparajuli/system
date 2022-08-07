@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -169,4 +170,13 @@ public class WelcomeController {
 //	    String time = new SimpleDateFormat("HH:mm").format(new Date());
 //	    return new OutputMessage(message.getFrom(), message.getText(), time);
 //	}
+	
+	@GetMapping("/search")
+	public String search(Model model,@RequestParam("text") String text) {
+		List<Item> searchItems = welcomeService.searchItem(text);
+		model.addAttribute("foodItems", searchItems);
+		model.addAttribute("categories", welcomeService.getCategoryNameFromMenus(searchItems));
+		
+		return "dashboard";
+	}
 }
