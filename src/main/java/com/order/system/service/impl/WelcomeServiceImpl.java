@@ -324,8 +324,8 @@ public class WelcomeServiceImpl implements WelcomeService{
 
 	@Override
 	public List<Item> searchItem(String text) {
-		List<Item> searchItems = itemDao.searchByText(text);
-		return itemDao.searchByText(text);
+		List<Item> searchItems = itemDao.findAll();
+		return searchItems;
 	}
 	
 	@Override

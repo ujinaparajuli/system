@@ -18,7 +18,9 @@ public interface WelcomeService {
 	public List<cartDTO> viewCart(List<ItemCart> itemsInSession);
 	public void checkout(Double grandTotal);
 	
+	// search
 	public List<Item> searchItem(String text);
+	public List<String> getCategoryNameFromMenus(List<Item> searchItems);
 	
 	//public List<User> getUsers();
 	

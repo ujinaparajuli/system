@@ -35,6 +35,7 @@ import com.order.system.model.Checkout;
 import com.order.system.model.ItemCart;
 import com.order.system.model.Message;
 import com.order.system.model.OutputMessage;
+import com.order.system.model.Viewcart;
 import com.order.system.model.cartDTO;
 import com.order.system.service.WelcomeService;
 
@@ -46,6 +47,9 @@ public class WelcomeController {
 	public String welcome(Model model, HttpServletRequest request) {
 		model.addAttribute("foodItems",welcomeService.getFoodItems());
 		model.addAttribute("categories", welcomeService.getAllMenuCategory());
+		model.addAttribute("isDashboardContainer", true);
+		model.addAttribute("isDashboardNavBar", true);
+		model.addAttribute("isDashboardSideBar", true);
 		String isFromChekout = (String) request.getAttribute("isCheckoutSuccessful");
 		if( isFromChekout != null && isFromChekout.equalsIgnoreCase("true")) {
 			System.out.println(isFromChekout);
@@ -54,7 +58,7 @@ public class WelcomeController {
 			System.out.println(isFromChekout);
 			model.addAttribute("isCheckoutSuccessful", false);
 		}
-		return "dashboard";
+		return "main-dashboard";
 	}
 	
 	@GetMapping("/item/{id}")
@@ -66,8 +70,11 @@ public class WelcomeController {
 	@GetMapping("/category/{name}")
 	public String getItemFromCategory(@PathVariable("name") String category, Model model) {
 		model.addAttribute("foodItems",welcomeService.getFoodItemFromCategory(category));
-		model.addAttribute("categories", welcomeService.getAllMenuCategory());
-		return "dashboard";
+		model.addAttribute("categories", welcomeService.getCategoryNameFromMenus(welcomeService.getFoodItemFromCategory(category)));
+		model.addAttribute("isDashboardContainer", true);
+		model.addAttribute("isDashboardNavBar", true);
+		model.addAttribute("isDashboardSideBar", true);
+		return "main-dashboard";
 	}
 	
 	@PostMapping("/add/{itemId}")
@@ -102,10 +109,13 @@ public class WelcomeController {
 	}
 	
 	@GetMapping("/cart/view")
-	public String viewCart(Model model, HttpSession session) {
+	public ResponseEntity viewCart(HttpSession session) {
+		Viewcart viewCart = new Viewcart();
+		
 		List<ItemCart> itemsInSession = (List<ItemCart>) session.getAttribute("CART_SESSION");
 		if(itemsInSession == null || itemsInSession.isEmpty()) {
-			model.addAttribute("isCartEmpty", true);
+			viewCart.setCartEmpty(true);
+			return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
 		}else {
 			List<cartDTO> cartsDtos = welcomeService.viewCart(itemsInSession);
 			Double grandTotal = 0.0;
@@ -113,14 +123,13 @@ public class WelcomeController {
 				grandTotal = grandTotal + cartDto.getItemTotal();
 			}
 			double tax = grandTotal * 7 / 100;
-			model.addAttribute("isCartEmpty", false);
-			model.addAttribute("allCart", cartsDtos);
-			model.addAttribute("itemCount", cartsDtos.size());
-			model.addAttribute("grandTotal", grandTotal);
-			model.addAttribute("grandTotalWithTax", grandTotal + tax);
-
+			viewCart.setCartDtos(cartsDtos);
+			viewCart.setCartEmpty(false);
+			viewCart.setGrandTotal(String.valueOf(grandTotal));
+			viewCart.setGrandtotalWithTax(String.valueOf(grandTotal+tax));
+			viewCart.setItemCount(String.valueOf(cartsDtos.size()));
+			return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
 		}
-		return "cart1";
 	}
 	
 
@@ -128,7 +137,9 @@ public class WelcomeController {
 	public String checkout(@PathVariable("grandTotal") Double grandTotal, Model model) {
 		model.addAttribute("total", grandTotal);
 		model.addAttribute("checkout", new Checkout());
-		return "checkout";
+		model.addAttribute("isCheckoutContainer", true);
+		model.addAttribute("isDashboardNavBar", true);
+		return "main-dashboard";
 	}
 	
 	@GetMapping("/save/view")

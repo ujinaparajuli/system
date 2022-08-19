@@ -15,8 +15,6 @@ public interface ItemDao extends JpaRepository<Item, Long>{
 	
 	List<Item> findByMenuId(Long menuId);
 	 
-	@Query("SELECT i FROM item i WHERE i.title LIKE '%?1%'")
-	List<Item> searchByText(String text);
+//	@Query("SELECT i FROM item i WHERE i.title LIKE '%?1%'")
+//	List<Item> searchByText(String text);
 }
-
-//SELECT * FROM item WHERE items.xml LIKE '%123456%'

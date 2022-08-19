@@ -120,9 +120,6 @@ label.radio input:checked + span {
 
 <body>
 
-<%@include file="./navbar.jsp"%>
-
-
 <c:choose>
    <c:when test="${isCartEmpty}">
    	<p>Your cart is empty. Please select some item.</p>
