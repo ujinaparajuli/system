@@ -7,7 +7,7 @@
 	<ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
 	       	<a class ="cart-link" href="<spring:url value="/cart/view"/>">
-	       		<i class="fa fa-shopping-cart fa-5x" aria-hidden="true"></i>
+	       		<i class="fa fa-shopping-cart fa-4x" aria-hidden="true"></i>
 	       	</a>
        	
         </li>

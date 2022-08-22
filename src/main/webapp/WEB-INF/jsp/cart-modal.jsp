@@ -46,7 +46,10 @@
       </div>
       <div class="modal-footer border-top-0 d-flex justify-content-between">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success">Checkout</button>
+        <spring:url value="/checkout" var="checkout" />
+        <form class="checkout" action="${checkout}" method="POST">
+			<button type="submit" class="btn btn-success">Checkout</button>
+		</form>
       </div>
     </div>
   </div>

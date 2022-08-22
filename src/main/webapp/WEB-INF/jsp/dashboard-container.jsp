@@ -1,4 +1,4 @@
-<div class="table-responsive">
+<div class="row">
     <c:forEach items="${foodItems}" var="foodItem">
 			<div class="item-card col-lg-4 col-md-6 mb-4" data-toggle="modal" data-target="#exampleModal" data-id=${foodItem.id} data-title=${foodItem.title} data-summary=${foodItem.summary} data-price=${foodItem.price} data-img=${foodItem.img} style="cursor: pointer;">
               <div class="card h-100">

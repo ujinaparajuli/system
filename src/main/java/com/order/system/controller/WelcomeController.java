@@ -113,11 +113,18 @@ public class WelcomeController {
 		Viewcart viewCart = new Viewcart();
 		
 		List<ItemCart> itemsInSession = (List<ItemCart>) session.getAttribute("CART_SESSION");
-		if(itemsInSession == null || itemsInSession.isEmpty()) {
+		
+		viewCart = getViewCart(itemsInSession);
+		
+		return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
+	}
+	
+	private Viewcart getViewCart(List<ItemCart> items) {
+		Viewcart viewCart = new Viewcart();
+		if(items == null || items.isEmpty()) {
 			viewCart.setCartEmpty(true);
-			return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
 		}else {
-			List<cartDTO> cartsDtos = welcomeService.viewCart(itemsInSession);
+			List<cartDTO> cartsDtos = welcomeService.viewCart(items);
 			Double grandTotal = 0.0;
 			for(cartDTO cartDto : cartsDtos) {
 				grandTotal = grandTotal + cartDto.getItemTotal();
@@ -128,14 +135,20 @@ public class WelcomeController {
 			viewCart.setGrandTotal(String.valueOf(grandTotal));
 			viewCart.setGrandtotalWithTax(String.valueOf(grandTotal+tax));
 			viewCart.setItemCount(String.valueOf(cartsDtos.size()));
-			return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
 		}
+		
+		return viewCart;
 	}
 	
 
-	@PostMapping("/checkout/{grandTotal}")
-	public String checkout(@PathVariable("grandTotal") Double grandTotal, Model model) {
-		model.addAttribute("total", grandTotal);
+	@PostMapping("/checkout")
+	public String checkout(HttpSession session, Model model) {
+
+		List<ItemCart> itemsInSession = (List<ItemCart>) session.getAttribute("CART_SESSION");
+		
+		Viewcart viewCart = getViewCart(itemsInSession);
+		
+		model.addAttribute("total", viewCart.getGrandTotal());
 		model.addAttribute("checkout", new Checkout());
 		model.addAttribute("isCheckoutContainer", true);
 		model.addAttribute("isDashboardNavBar", true);

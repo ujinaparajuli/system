@@ -9,7 +9,7 @@ $('#exampleModal').on('show.bs.modal', function (event) {
   // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
   var modal = $(this)
   modal.find('.modal-body #summary').html(summary)
-  modal.find('.modal-body #title').html(title)
+  modal.find('.modal-title').html(title)
   modal.find('.modal-body #price').html(price)
   var imgTag = modal.find('.modal-body #image')
   var imgUrl = "/resources/img/" + img + ".jpg"
