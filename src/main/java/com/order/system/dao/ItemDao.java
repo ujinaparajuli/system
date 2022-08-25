@@ -17,4 +17,6 @@ public interface ItemDao extends JpaRepository<Item, Long>{
 	 
 //	@Query("SELECT i FROM item i WHERE i.title LIKE '%?1%'")
 //	List<Item> searchByText(String text);
+	
+	List<Item> findByTitleContaining(String title);
 }

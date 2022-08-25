@@ -61,12 +61,6 @@ public class WelcomeController {
 		return "main-dashboard";
 	}
 	
-	@GetMapping("/item/{id}")
-	public String getItem(@PathVariable("id") Long id, Model model) {
-		model.addAttribute("foodItem",welcomeService.getItem(id));
-		return "item";
-	}
-	
 	@GetMapping("/category/{name}")
 	public String getItemFromCategory(@PathVariable("name") String category, Model model) {
 		model.addAttribute("foodItems",welcomeService.getFoodItemFromCategory(category));
@@ -89,13 +83,16 @@ public class WelcomeController {
 			itemsInSession.add(itemCart);
 		}else {
 			boolean isFound = false;
+			int size = 0;
 			for(ItemCart itemCart : itemsInSession) {
-				if(itemId.equals(itemCart.getItemId())) {
-					isFound = true;
+				if(itemId.longValue() == itemCart.getItemId().longValue()) {
 					itemCart.setItemCount(itemCart.getItemCount() + 1);
+					break;
+				}else {
+					size++;
 				}
 			}
-			if(!isFound) {
+			if(size == itemsInSession.size()) {
 				ItemCart itemCart = new ItemCart();
 				itemCart.setItemId(itemId);
 				itemCart.setItemCount(1);
@@ -155,16 +152,6 @@ public class WelcomeController {
 		return "main-dashboard";
 	}
 	
-	@GetMapping("/save/view")
-	public String viewAllSaveItem(Model model, HttpSession session) {
-		return "view";
-	}
-	
-	@GetMapping("/save/view/{userId")
-	public String viewOrderItem(@PathVariable("userId") Long userId, Model model) {
-		return "order/:";
-	}
-	
 	@PostMapping("/postcheckout")
 	public String postcheckout(RedirectAttributes redirectAttributes, HttpServletRequest request, @ModelAttribute("checkout") Checkout checkout) {
 		List<ItemCart> itemsInSession = (List<ItemCart>) request.getSession().getAttribute("CART_SESSION");
@@ -176,31 +163,17 @@ public class WelcomeController {
         return "redirect:/";
 		
 	}
-
-	@GetMapping("/manager")
-	public String manager(Model model) {
-		return "manager";
-	}
 	
-	@PostMapping("/cash/checkout/{orderId}")
-	public String cashCheckout(Model model,@PathVariable("orderId")Long OrderId) {
-		System.out.println(OrderId);
-		return "success";
-	}
-	
-//	@MessageMapping("/chat")
-//	@SendTo("/topic/messages")
-//	public OutputMessage send(Message message) throws Exception {
-//	    String time = new SimpleDateFormat("HH:mm").format(new Date());
-//	    return new OutputMessage(message.getFrom(), message.getText(), time);
-//	}
-	
-	@GetMapping("/search")
+	@PostMapping("/search")
 	public String search(Model model,@RequestParam("text") String text) {
 		List<Item> searchItems = welcomeService.searchItem(text);
 		model.addAttribute("foodItems", searchItems);
 		model.addAttribute("categories", welcomeService.getCategoryNameFromMenus(searchItems));
 		
-		return "dashboard";
+		model.addAttribute("isDashboardContainer", true);
+		model.addAttribute("isDashboardNavBar", true);
+		model.addAttribute("isDashboardSideBar", true);
+		
+		return "main-dashboard";
 	}
 }
