@@ -142,7 +142,7 @@ public class WelcomeServiceImpl implements WelcomeService{
 		List<cartDTO> allcart = new ArrayList<cartDTO>();
 		for(ItemCart itemCart: ItemsInSession) {
 			cartDTO cartDto = new cartDTO();
-			cartDto.setCount(ItemsInSession.size());
+			cartDto.setCount(itemCart.getItemCount());
 			Item item = itemDao.findById(itemCart.getItemId()).get();
 			cartDto.setItemId(item.getId());
 			cartDto.setImg(item.getImg());
@@ -324,7 +324,7 @@ public class WelcomeServiceImpl implements WelcomeService{
 
 	@Override
 	public List<Item> searchItem(String text) {
-		List<Item> searchItems = itemDao.findAll();
+		List<Item> searchItems = itemDao.findByTitleContaining(text);
 		return searchItems;
 	}
 	

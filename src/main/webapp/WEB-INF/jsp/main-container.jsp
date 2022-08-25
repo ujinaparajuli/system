@@ -9,7 +9,7 @@
 	</c:if>
 	
 	<c:if test = "${isCheckoutContainer}">
-		 <%@include file="./checkout.jsp"%>
+		 <%@include file="./main_checkout.jsp"%>
 	</c:if>
 	
 </main>

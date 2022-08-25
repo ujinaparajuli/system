@@ -61,12 +61,6 @@ public class WelcomeController {
 		return "main-dashboard";
 	}
 	
-	@GetMapping("/item/{id}")
-	public String getItem(@PathVariable("id") Long id, Model model) {
-		model.addAttribute("foodItem",welcomeService.getItem(id));
-		return "item";
-	}
-	
 	@GetMapping("/category/{name}")
 	public String getItemFromCategory(@PathVariable("name") String category, Model model) {
 		model.addAttribute("foodItems",welcomeService.getFoodItemFromCategory(category));
@@ -89,13 +83,16 @@ public class WelcomeController {
 			itemsInSession.add(itemCart);
 		}else {
 			boolean isFound = false;
+			int size = 0;
 			for(ItemCart itemCart : itemsInSession) {
-				if(itemId.equals(itemCart.getItemId())) {
-					isFound = true;
+				if(itemId.longValue() == itemCart.getItemId().longValue()) {
 					itemCart.setItemCount(itemCart.getItemCount() + 1);
+					break;
+				}else {
+					size++;
 				}
 			}
-			if(!isFound) {
+			if(size == itemsInSession.size()) {
 				ItemCart itemCart = new ItemCart();
 				itemCart.setItemId(itemId);
 				itemCart.setItemCount(1);
@@ -113,11 +110,18 @@ public class WelcomeController {
 		Viewcart viewCart = new Viewcart();
 		
 		List<ItemCart> itemsInSession = (List<ItemCart>) session.getAttribute("CART_SESSION");
-		if(itemsInSession == null || itemsInSession.isEmpty()) {
+		
+		viewCart = getViewCart(itemsInSession);
+		
+		return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
+	}
+	
+	private Viewcart getViewCart(List<ItemCart> items) {
+		Viewcart viewCart = new Viewcart();
+		if(items == null || items.isEmpty()) {
 			viewCart.setCartEmpty(true);
-			return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
 		}else {
-			List<cartDTO> cartsDtos = welcomeService.viewCart(itemsInSession);
+			List<cartDTO> cartsDtos = welcomeService.viewCart(items);
 			Double grandTotal = 0.0;
 			for(cartDTO cartDto : cartsDtos) {
 				grandTotal = grandTotal + cartDto.getItemTotal();
@@ -128,28 +132,24 @@ public class WelcomeController {
 			viewCart.setGrandTotal(String.valueOf(grandTotal));
 			viewCart.setGrandtotalWithTax(String.valueOf(grandTotal+tax));
 			viewCart.setItemCount(String.valueOf(cartsDtos.size()));
-			return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
 		}
+		
+		return viewCart;
 	}
 	
 
-	@PostMapping("/checkout/{grandTotal}")
-	public String checkout(@PathVariable("grandTotal") Double grandTotal, Model model) {
-		model.addAttribute("total", grandTotal);
+	@PostMapping("/checkout")
+	public String checkout(HttpSession session, Model model) {
+
+		List<ItemCart> itemsInSession = (List<ItemCart>) session.getAttribute("CART_SESSION");
+		
+		Viewcart viewCart = getViewCart(itemsInSession);
+		
+		model.addAttribute("total", viewCart.getGrandTotal());
 		model.addAttribute("checkout", new Checkout());
 		model.addAttribute("isCheckoutContainer", true);
-		model.addAttribute("isDashboardNavBar", true);
+		model.addAttribute("isCheckOutNavBar", true);
 		return "main-dashboard";
-	}
-	
-	@GetMapping("/save/view")
-	public String viewAllSaveItem(Model model, HttpSession session) {
-		return "view";
-	}
-	
-	@GetMapping("/save/view/{userId")
-	public String viewOrderItem(@PathVariable("userId") Long userId, Model model) {
-		return "order/:";
 	}
 	
 	@PostMapping("/postcheckout")
@@ -163,31 +163,17 @@ public class WelcomeController {
         return "redirect:/";
 		
 	}
-
-	@GetMapping("/manager")
-	public String manager(Model model) {
-		return "manager";
-	}
 	
-	@PostMapping("/cash/checkout/{orderId}")
-	public String cashCheckout(Model model,@PathVariable("orderId")Long OrderId) {
-		System.out.println(OrderId);
-		return "success";
-	}
-	
-//	@MessageMapping("/chat")
-//	@SendTo("/topic/messages")
-//	public OutputMessage send(Message message) throws Exception {
-//	    String time = new SimpleDateFormat("HH:mm").format(new Date());
-//	    return new OutputMessage(message.getFrom(), message.getText(), time);
-//	}
-	
-	@GetMapping("/search")
+	@PostMapping("/search")
 	public String search(Model model,@RequestParam("text") String text) {
 		List<Item> searchItems = welcomeService.searchItem(text);
 		model.addAttribute("foodItems", searchItems);
 		model.addAttribute("categories", welcomeService.getCategoryNameFromMenus(searchItems));
 		
-		return "dashboard";
+		model.addAttribute("isDashboardContainer", true);
+		model.addAttribute("isDashboardNavBar", true);
+		model.addAttribute("isDashboardSideBar", true);
+		
+		return "main-dashboard";
 	}
 }

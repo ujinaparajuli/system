@@ -2,7 +2,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle"></h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -10,20 +10,22 @@
       <div class="modal-body">
         
         <div class="row">
-				<div class="col-xs-12 col-lg-4">
-					<img id="image" class="img img-responsive" ></img>
-				</div>
-				<div class="col-xs-12 col-lg-8">
-					<h3 id="title"></h3>
-					<hr/>
-					
-					<p id ="summary"></p>
-					<hr/>
-					
-					<h4>Price: NRs <strong id="price"></strong></h4>
-					<hr/>
-				</div>
+			<div class="col-lg">
+				<img id="image" class="img img-responsive" width="200" height="200"></img>
 			</div>
+			<div class="col-lg">
+				<p id ="summary"></p>
+			</div>
+		</div>
+		<div class="row">
+		
+			<div class="col-6">
+			</div>
+			<div class="col-6">
+				<h4>Price: NRs <strong id="price"></strong></h4>
+			</div>
+		
+		</div>
         
       </div> 
 
