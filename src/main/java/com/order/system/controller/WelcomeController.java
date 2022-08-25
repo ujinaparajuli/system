@@ -148,7 +148,7 @@ public class WelcomeController {
 		model.addAttribute("total", viewCart.getGrandTotal());
 		model.addAttribute("checkout", new Checkout());
 		model.addAttribute("isCheckoutContainer", true);
-		model.addAttribute("isDashboardNavBar", true);
+		model.addAttribute("isCheckOutNavBar", true);
 		return "main-dashboard";
 	}
 	

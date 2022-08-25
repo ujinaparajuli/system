@@ -21,6 +21,10 @@
   <c:if test = "${isDashboardNavBar}">
   	<%@include file="./main-navbar.jsp"%>
   </c:if>
+  
+  <c:if test = "${isCheckOutNavBar}">
+  	<%@include file="./main-navbar-checkout.jsp"%>
+  </c:if>
 
     <div class="container-fluid">
       <div class="row">
