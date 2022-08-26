@@ -3,8 +3,12 @@ package com.order.system.service.impl;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -22,6 +26,7 @@ import com.order.system.entity.Item;
 import com.order.system.entity.Menu;
 import com.order.system.entity.Order;
 import com.order.system.entity.User;
+import com.order.system.model.AdminViewDTO;
 import com.order.system.model.Checkout;
 import com.order.system.model.ItemCart;
 import com.order.system.model.OrderDTO;
@@ -137,7 +142,7 @@ public class WelcomeServiceImpl implements WelcomeService{
 		List<cartDTO> allcart = new ArrayList<cartDTO>();
 		for(ItemCart itemCart: ItemsInSession) {
 			cartDTO cartDto = new cartDTO();
-			cartDto.setCount(ItemsInSession.size());
+			cartDto.setCount(itemCart.getItemCount());
 			Item item = itemDao.findById(itemCart.getItemId()).get();
 			cartDto.setItemId(item.getId());
 			cartDto.setImg(item.getImg());
@@ -286,5 +291,54 @@ public class WelcomeServiceImpl implements WelcomeService{
 		} catch (Exception e) {
 			System.out.println("Not able to send email " + e.toString());
 		}	
+	}
+
+	@Override
+	public List<AdminViewDTO> getMenuAndItemForAdmin() {
+		List<Item> items = itemDao.findAll();
+		List<AdminViewDTO> adminViews = new ArrayList<AdminViewDTO>();
+		for(Item item : items) {
+			AdminViewDTO adminview = new AdminViewDTO();
+			adminview.setItemId(item.getId());
+			adminview.setImg(item.getImg());
+			adminview.setMenuId(item.getMenuId());
+			adminview.setMenuName(getMenuNameFromId(item.getMenuId()));
+			adminview.setPrice(item.getPrice());
+			adminview.setSummary(item.getSummary());
+			adminview.setTitle(item.getTitle());
+			adminview.setType(item.getType());
+			
+			adminViews.add(adminview);
+			
+		}
+		
+		return adminViews;
+		
+	}
+
+	private String getMenuNameFromId(Long menuId) {
+		Optional<Menu> optionalMenu = menuDao.findById(menuId);
+		
+		return optionalMenu.isPresent() ? optionalMenu.get().getCategory() : null;
+	}
+
+	@Override
+	public List<Item> searchItem(String text) {
+		List<Item> searchItems = itemDao.findByTitleContaining(text);
+		return searchItems;
+	}
+	
+	@Override
+	public List<String> getCategoryNameFromMenus(List<Item> searchItems){
+		List<String> list = new ArrayList();
+		Set<String> menuNames = new HashSet<String>();
+		for(Item item:searchItems) {
+			String menuName	= getMenuNameFromId(item.getMenuId());
+			menuNames.add(menuName);
+		}
+		
+		
+		list.addAll(menuNames);
+		return list;
 	}
 }

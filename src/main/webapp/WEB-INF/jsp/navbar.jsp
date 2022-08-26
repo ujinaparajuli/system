@@ -12,6 +12,12 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="<spring:url value="/cart/view"/>">View Cart</a>
         </li>
+        <li class="nav-item">
+	        <form class="d-flex">
+		      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+		      <button class="btn btn-outline-success" type="submit">Search</button>
+		    </form>
+        </li>
       </ul>
     </div>
   </div>

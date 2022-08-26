@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -34,6 +35,7 @@ import com.order.system.model.Checkout;
 import com.order.system.model.ItemCart;
 import com.order.system.model.Message;
 import com.order.system.model.OutputMessage;
+import com.order.system.model.Viewcart;
 import com.order.system.model.cartDTO;
 import com.order.system.service.WelcomeService;
 
@@ -45,6 +47,9 @@ public class WelcomeController {
 	public String welcome(Model model, HttpServletRequest request) {
 		model.addAttribute("foodItems",welcomeService.getFoodItems());
 		model.addAttribute("categories", welcomeService.getAllMenuCategory());
+		model.addAttribute("isDashboardContainer", true);
+		model.addAttribute("isDashboardNavBar", true);
+		model.addAttribute("isDashboardSideBar", true);
 		String isFromChekout = (String) request.getAttribute("isCheckoutSuccessful");
 		if( isFromChekout != null && isFromChekout.equalsIgnoreCase("true")) {
 			System.out.println(isFromChekout);
@@ -53,20 +58,17 @@ public class WelcomeController {
 			System.out.println(isFromChekout);
 			model.addAttribute("isCheckoutSuccessful", false);
 		}
-		return "dashboard";
-	}
-	
-	@GetMapping("/item/{id}")
-	public String getItem(@PathVariable("id") Long id, Model model) {
-		model.addAttribute("foodItem",welcomeService.getItem(id));
-		return "item";
+		return "main-dashboard";
 	}
 	
 	@GetMapping("/category/{name}")
 	public String getItemFromCategory(@PathVariable("name") String category, Model model) {
 		model.addAttribute("foodItems",welcomeService.getFoodItemFromCategory(category));
-		model.addAttribute("categories", welcomeService.getAllMenuCategory());
-		return "dashboard";
+		model.addAttribute("categories", welcomeService.getCategoryNameFromMenus(welcomeService.getFoodItemFromCategory(category)));
+		model.addAttribute("isDashboardContainer", true);
+		model.addAttribute("isDashboardNavBar", true);
+		model.addAttribute("isDashboardSideBar", true);
+		return "main-dashboard";
 	}
 	
 	@PostMapping("/add/{itemId}")
@@ -81,13 +83,16 @@ public class WelcomeController {
 			itemsInSession.add(itemCart);
 		}else {
 			boolean isFound = false;
+			int size = 0;
 			for(ItemCart itemCart : itemsInSession) {
-				if(itemId.equals(itemCart.getItemId())) {
-					isFound = true;
+				if(itemId.longValue() == itemCart.getItemId().longValue()) {
 					itemCart.setItemCount(itemCart.getItemCount() + 1);
+					break;
+				}else {
+					size++;
 				}
 			}
-			if(!isFound) {
+			if(size == itemsInSession.size()) {
 				ItemCart itemCart = new ItemCart();
 				itemCart.setItemId(itemId);
 				itemCart.setItemCount(1);
@@ -101,43 +106,50 @@ public class WelcomeController {
 	}
 	
 	@GetMapping("/cart/view")
-	public String viewCart(Model model, HttpSession session) {
+	public ResponseEntity viewCart(HttpSession session) {
+		Viewcart viewCart = new Viewcart();
+		
 		List<ItemCart> itemsInSession = (List<ItemCart>) session.getAttribute("CART_SESSION");
-		if(itemsInSession == null || itemsInSession.isEmpty()) {
-			model.addAttribute("isCartEmpty", true);
+		
+		viewCart = getViewCart(itemsInSession);
+		
+		return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
+	}
+	
+	private Viewcart getViewCart(List<ItemCart> items) {
+		Viewcart viewCart = new Viewcart();
+		if(items == null || items.isEmpty()) {
+			viewCart.setCartEmpty(true);
 		}else {
-			List<cartDTO> cartsDtos = welcomeService.viewCart(itemsInSession);
+			List<cartDTO> cartsDtos = welcomeService.viewCart(items);
 			Double grandTotal = 0.0;
 			for(cartDTO cartDto : cartsDtos) {
 				grandTotal = grandTotal + cartDto.getItemTotal();
 			}
 			double tax = grandTotal * 7 / 100;
-			model.addAttribute("isCartEmpty", false);
-			model.addAttribute("allCart", cartsDtos);
-			model.addAttribute("itemCount", cartsDtos.size());
-			model.addAttribute("grandTotal", grandTotal);
-			model.addAttribute("grandTotalWithTax", grandTotal + tax);
-
+			viewCart.setCartDtos(cartsDtos);
+			viewCart.setCartEmpty(false);
+			viewCart.setGrandTotal(String.valueOf(grandTotal));
+			viewCart.setGrandtotalWithTax(String.valueOf(grandTotal+tax));
+			viewCart.setItemCount(String.valueOf(cartsDtos.size()));
 		}
-		return "cart1";
+		
+		return viewCart;
 	}
 	
 
-	@PostMapping("/checkout/{grandTotal}")
-	public String checkout(@PathVariable("grandTotal") Double grandTotal, Model model) {
-		model.addAttribute("total", grandTotal);
+	@PostMapping("/checkout")
+	public String checkout(HttpSession session, Model model) {
+
+		List<ItemCart> itemsInSession = (List<ItemCart>) session.getAttribute("CART_SESSION");
+		
+		Viewcart viewCart = getViewCart(itemsInSession);
+		
+		model.addAttribute("total", viewCart.getGrandTotal());
 		model.addAttribute("checkout", new Checkout());
-		return "checkout";
-	}
-	
-	@GetMapping("/save/view")
-	public String viewAllSaveItem(Model model, HttpSession session) {
-		return "view";
-	}
-	
-	@GetMapping("/save/view/{userId")
-	public String viewOrderItem(@PathVariable("userId") Long userId, Model model) {
-		return "order/:";
+		model.addAttribute("isCheckoutContainer", true);
+		model.addAttribute("isCheckOutNavBar", true);
+		return "main-dashboard";
 	}
 	
 	@PostMapping("/postcheckout")
@@ -151,22 +163,17 @@ public class WelcomeController {
         return "redirect:/";
 		
 	}
-
-	@GetMapping("/manager")
-	public String manager(Model model) {
-		return "manager";
-	}
 	
-	@PostMapping("/cash/checkout/{orderId}")
-	public String cashCheckout(Model model,@PathVariable("orderId")Long OrderId) {
-		System.out.println(OrderId);
-		return "success";
+	@PostMapping("/search")
+	public String search(Model model,@RequestParam("text") String text) {
+		List<Item> searchItems = welcomeService.searchItem(text);
+		model.addAttribute("foodItems", searchItems);
+		model.addAttribute("categories", welcomeService.getCategoryNameFromMenus(searchItems));
+		
+		model.addAttribute("isDashboardContainer", true);
+		model.addAttribute("isDashboardNavBar", true);
+		model.addAttribute("isDashboardSideBar", true);
+		
+		return "main-dashboard";
 	}
-	
-//	@MessageMapping("/chat")
-//	@SendTo("/topic/messages")
-//	public OutputMessage send(Message message) throws Exception {
-//	    String time = new SimpleDateFormat("HH:mm").format(new Date());
-//	    return new OutputMessage(message.getFrom(), message.getText(), time);
-//	}
 }
