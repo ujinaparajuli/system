@@ -15,6 +15,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.order.system.dao.CartDao;
 import com.order.system.dao.ItemDao;
@@ -85,6 +86,8 @@ public class WelcomeServiceImpl implements WelcomeService{
 	public List<Item> getFoodItemFromCategory(String category) {
 		if(category.equalsIgnoreCase("All")) {
 			return itemDao.findAll();
+		}else if("today-special".equalsIgnoreCase(category)) {
+			return null;
 		}else {
 			List<Menu> menuList = menuDao.findByCategory(category);
 			Long menuId = menuList.get(0).getId();
@@ -174,11 +177,12 @@ public class WelcomeServiceImpl implements WelcomeService{
 		order.setGrandTotal(checkoutDto.getTotal());
 		order.setOrderDate(new Date());
 		order.setUserId(user.getId());
-		if(checkoutDto.getPaymentMethod().equalsIgnoreCase("cash")) {
-			order.setStatus("NEW");
-		}else {
-			order.setStatus("COMPLETE");
-		}
+//		if(checkoutDto.getPaymentMethod().equalsIgnoreCase("cash")) {
+//			order.setStatus("NEW");
+//		}else {
+//			order.setStatus("COMPLETE");
+//		}
+		order.setStatus("COMPLETE");
 		order = orderDao.save(order);
 		
 		List<Cart> carts = new ArrayList<Cart>();
@@ -290,7 +294,7 @@ public class WelcomeServiceImpl implements WelcomeService{
 	        javaMailSender.send(msg);
 		} catch (Exception e) {
 			System.out.println("Not able to send email " + e.toString());
-		}	
+		}
 	}
 
 	@Override
@@ -340,5 +344,45 @@ public class WelcomeServiceImpl implements WelcomeService{
 		
 		list.addAll(menuNames);
 		return list;
+	}
+
+	@Override
+	public void deleteItemAdmin(Long itemId) {
+		Optional<Item> optionalItem = itemDao.findById(itemId);
+		if(optionalItem.isPresent()) {
+			long menuId = optionalItem.get().getMenuId();
+			itemDao.deleteById(itemId);
+			List<Item> items = itemDao.findByMenuId(menuId);
+			if(items == null || items.isEmpty()) {
+				menuDao.deleteById(menuId);
+			}
+		}
+	}
+	
+	
+	@Transactional
+	@Override
+	public void addItemAdmin(AdminViewDTO adminView) {
+		Item item = new Item();
+		item.setImg(adminView.getImg());
+		item.setPrice(adminView.getPrice());
+		item.setSummary(adminView.getSummary());
+		item.setTitle(adminView.getTitle());
+		item.setMenuId(getMenuIdFromName(adminView.getMenuName()));
+		
+		itemDao.save(item);
+	}
+
+	private Long getMenuIdFromName(String menuName) {
+		List<Menu> menus = menuDao.findByCategory(menuName);
+		if(menus != null && ! menus.isEmpty()) {
+			Menu menu = menus.get(0);
+			return menu.getId();
+		}else {
+			Menu menu = new Menu();
+			menu.setCategory(menuName);
+			Menu m = menuDao.save(menu);
+			return m.getId();
+		}
 	}
 }

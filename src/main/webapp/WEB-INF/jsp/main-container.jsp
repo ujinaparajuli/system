@@ -4,12 +4,16 @@
 		 <%@include file="./dashboard-container.jsp"%>
 	</c:if>
 	
-	<c:if test = "${isViewCartContainer}">
-		 <%@include file="./cart1.jsp"%>
-	</c:if>
-	
 	<c:if test = "${isCheckoutContainer}">
 		 <%@include file="./main_checkout.jsp"%>
+	</c:if>
+	
+	<c:if test = "${isFromChef}">
+		 <%@include file="./chef-container.jsp"%>
+	</c:if>
+	
+	<c:if test = "${isFromAdmin}">
+		 <%@include file="./admin-container.jsp"%>
 	</c:if>
 	
 </main>

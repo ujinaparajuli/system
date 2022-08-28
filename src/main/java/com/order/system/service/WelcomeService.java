@@ -37,6 +37,8 @@ public interface WelcomeService {
 	
 	//Admin
 	public List<AdminViewDTO> getMenuAndItemForAdmin();
+	public void deleteItemAdmin(Long itemId);
+	public void addItemAdmin(AdminViewDTO item);
 	
 	
 

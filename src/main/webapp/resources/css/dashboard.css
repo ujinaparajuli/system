@@ -132,3 +132,21 @@ body {
 .modal-footer {
   padding-top: 0rem;
 }
+
+.order-row {
+	height: 50px;
+	background-color: #e7ecec;
+	margin-top: 10px;
+	width: 400px;
+	margin-left: 140px;
+	align-content: center;
+}
+
+.create-new-item {
+	margin-bottom: 10px;
+}
+
+.table-users {
+	margin-top: 20px;
+}
+

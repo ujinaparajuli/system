@@ -20,6 +20,36 @@ $('#exampleModal').on('show.bs.modal', function (event) {
   
 })
 
+$('#view-order-modal').on('show.bs.modal', function (event) {
+  var div = $(event.relatedTarget) // Button that triggered the modal
+  var fname = div.data('fname')
+  var lname = div.data('lname')
+  var items = div.data('items')
+  var orderId = div.data('id')
+  
+  var modal = $(this)
+  
+  modal.find('.modal-title').html(fname + " " + lname)
+  var txt = "";
+  items = items.split("title=");
+  
+  for (i = 1; i < items.length; i++) {
+	  var orderName = items[i].substr(0, items[i].indexOf(','));
+	  
+	  var countStr = items[i].split('count=')[1];
+	  var count = countStr.substr(0, countStr.indexOf(','));
+	  txt = txt + '<div class="row"><div class="col-6"><h4>' + orderName + ' ' + '(' + count + ')</h4></div></div>';
+  }
+  
+  modal.find('.modal-body').html(txt)
+  
+  var viewOrderUrl = "/chef/order/" + orderId
+  
+  var aTagViewOrder = modal.find('.modal-footer .view-order-button')
+  aTagViewOrder.attr('href', viewOrderUrl)
+  
+})
+
 $(document).on("click", '.cart-link', function(e) {
                 e.preventDefault();
                 $.ajax({
