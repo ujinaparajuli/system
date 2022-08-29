@@ -1,4 +1,4 @@
-         <button type="button" class="btn btn-primary create-new-item" data-toggle="modal" data-target="#ModalLoginForm">
+         <button type="button" class="btn btn-link create-new-item" data-toggle="modal" data-target="#ModalLoginForm">
 		    + Add New Item
 		</button>
          
@@ -23,10 +23,19 @@
 				      <td>${adminView.summary}</th>
 				      <td>${adminView.img}</td>
 				      <td>${adminView.menuName}</td>
+				      
+				      <td><button type="button" class="btn btn-link" data-toggle="modal" 
+				      				data-target="#ModalEditForm" 
+				      				data-id="${adminView.itemId}" 
+				      				data-title="${adminView.title}" 
+				      				data-price="${adminView.price}" 
+				      				data-summary="${adminView.summary}" 
+				      				data-menu="${adminView.menuName}" 
+				      				data-img="${adminView.img}">Edit</button>
                     	  					
-    					<td><a class="btn mini blue-stripe" href="#">Edit</a></td>
-
-                        <td><a href="/admin/item/delete/${adminView.itemId}" class="confirm-delete btn mini red-stripe" role="button" data-title="johnny" data-id="1">Delete</a></td>
+                       <td><a href="/admin/item/delete/${adminView.itemId}">
+                       <button type="button" class="btn btn-link">Delete</button>
+                       	</a></td>
                     </tr>
     			</c:forEach>
                 
@@ -37,6 +46,7 @@
 
 
 <%@include file="./add-new-item-modal.jsp"%>
+<%@include file="./edit-item-modal.jsp"%>
 
 
 

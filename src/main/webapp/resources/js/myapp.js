@@ -20,6 +20,30 @@ $('#exampleModal').on('show.bs.modal', function (event) {
   
 })
 
+$('#ModalEditForm').on('show.bs.modal', function (event) {
+  var div = $(event.relatedTarget) // Button that triggered the modal
+  var id = div.data('id')
+  var title = div.data('title')
+  var price = div.data('price')
+  var summary = div.data('summary')
+  var img = div.data('img')
+  var menuName = div.data('menu')
+  
+  var editItemUrl = "/admin/edit/item/" + id
+  
+  var modal = $(this)
+  
+  var formTag = modal.find(".modal-body .edit-item-form");
+  formTag.attr('action', editItemUrl)
+  
+  $(".modal-body #title").val( title );
+  $(".modal-body #price").val( price );
+  $(".modal-body #summary").val( summary );
+  $(".modal-body #menu").val( menuName );
+  $(".modal-body #img").val( img );
+  
+})
+
 $('#view-order-modal').on('show.bs.modal', function (event) {
   var div = $(event.relatedTarget) // Button that triggered the modal
   var fname = div.data('fname')

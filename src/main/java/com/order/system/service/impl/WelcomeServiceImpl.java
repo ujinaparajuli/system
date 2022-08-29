@@ -385,4 +385,27 @@ public class WelcomeServiceImpl implements WelcomeService{
 			return m.getId();
 		}
 	}
+
+	@Override
+	public void editItemAdmin(AdminViewDTO adminView, Long itemId) {
+		Optional<Item> opItem = itemDao.findById(itemId);
+		if(opItem.isPresent()) {
+			Item item = opItem.get();
+			item.setImg(adminView.getImg());
+			item.setPrice(adminView.getPrice());
+			item.setSummary(adminView.getSummary());
+			item.setTitle(adminView.getTitle());
+			
+			itemDao.save(item);
+			
+			Optional<Menu> menuOp = menuDao.findById(item.getMenuId());
+			
+			if(menuOp.isPresent()) {
+				Menu menu = menuOp.get();
+				menu.setCategory(adminView.getMenuName());
+				
+				menuDao.save(menu);
+			}
+		}		
+	}
 }
