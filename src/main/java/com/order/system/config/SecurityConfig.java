@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/chef", "/chef/**").hasRole("CHEF")
 			.antMatchers("/**").permitAll()
 			.antMatchers(HttpMethod.POST,"/**").permitAll()
-			.and().formLogin().and().csrf().disable();
+			.and().formLogin().loginPage("/login").successHandler(new LoginSuccessHandler()).and().csrf().disable();
 		
 //		http.sessionManagement()
 //			.and()

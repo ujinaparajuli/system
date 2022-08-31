@@ -16,4 +16,8 @@
 		 <%@include file="./admin-container.jsp"%>
 	</c:if>
 	
+	<c:if test = "${isFromLogin}">
+		 <%@include file="./login-container.jsp"%>
+	</c:if>
+	
 </main>

@@ -182,12 +182,25 @@ public class WelcomeController {
 		return "main-dashboard";
 	}
 	
-	@RequestMapping(value="/logout", method = RequestMethod.GET)
+	@GetMapping(value="/logout")
 	public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
 	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    if (auth != null){    
 	        new SecurityContextLogoutHandler().logout(request, response, auth);
 	    }
-	    return "redirect:/login?logout"; //You can redirect wherever you want, but generally it's a good practice to show login screen again.
+	    return "redirect:/";
 	}
+	
+	@GetMapping(value = "/login")
+    public String login(Model model, String error, String logout) {
+        if (error != null)
+            model.addAttribute("errorMsg", "Your username and password are invalid.");
+
+        if (logout != null)
+            model.addAttribute("msg", "You have been logged out successfully.");
+        
+        model.addAttribute("isFromLogin", true);
+
+        return "main-dashboard";
+    }
 }

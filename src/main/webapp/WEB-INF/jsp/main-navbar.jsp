@@ -1,17 +1,21 @@
 <nav class="navbar sticky-top flex-md-nowrap p-0 navbar-light" style="background-color: #e3f2fd;"">
-   <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">Home</a>
-   <form class="form-inline col-sm-9" action="/search" method="post">
-	  <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="text">
-	  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-	</form>
-	<ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
-	       	<a class ="cart-link" href="<spring:url value="/cart/view"/>">
-	       		<i class="fa fa-shopping-cart fa-4x" aria-hidden="true"></i>
-	       	</a>
-       	
-        </li>
-      </ul>
+   <div class="row main-nav-row">
+	   <div class="col-sm-2 text-center">
+	   		<a href="/">Home</a>
+	   </div>
+	   <div class="col-sm-1">
+	   		<a class ="cart-link" href="<spring:url value="/cart/view"/>">View Cart</a>
+	   	</div>
+	   <div class="col-sm-6">
+		   <form class="form-inline" action="/search" method="post">
+			  <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="text">
+			  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+			</form>
+	   </div>
+	   <div class="col-sm-3 text-right">
+	   		<a class ="login-link" href="<spring:url value="/login"/>">Login</a>
+		</div>
+   </div>
 </nav>
 
 <%@include file="./cart-modal.jsp"%>
