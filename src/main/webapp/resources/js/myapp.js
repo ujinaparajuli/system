@@ -20,6 +20,17 @@ $('#exampleModal').on('show.bs.modal', function (event) {
   
 })
 
+$('#deleteItemModal').on('show.bs.modal', function (event) {
+  var div = $(event.relatedTarget) // Button that triggered the modal
+  var id = div.data('id')
+  var modal = $(this)
+  
+  var deleteUrl = "/admin/item/delete/" + id
+  var aTagDelete = modal.find('.modal-footer .delete-link')
+  aTagDelete.attr('href', deleteUrl)
+  
+})
+
 $('#ModalEditForm').on('show.bs.modal', function (event) {
   var div = $(event.relatedTarget) // Button that triggered the modal
   var id = div.data('id')

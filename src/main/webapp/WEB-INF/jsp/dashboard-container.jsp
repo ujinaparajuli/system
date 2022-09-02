@@ -1,3 +1,13 @@
+<c:if test = "${isCheckoutSuccessful}">
+		<div class="alert alert-primary alert-dismissible fade show" role="alert">
+		  Checkout is successful, Please wait for your order. Once order is ready we will mail you.
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+
+</c:if>
+
 <div class="row">
 	<c:forEach items="${foodItems}" var="foodItem">
 	
