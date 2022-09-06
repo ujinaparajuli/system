@@ -62,4 +62,10 @@ public class cartDTO {
 	public void setItemTotal(Double itemTotal) {
 		this.itemTotal = itemTotal;
 	}
+
+	@Override
+	public String toString() {
+		return "cartDTO [itemId=" + itemId + ", title=" + title + ", price=" + price + ", img=" + img + ", count="
+				+ count + ", itemTotal=" + itemTotal + ", grandTotal=" + grandTotal + "]";
+	}
 }

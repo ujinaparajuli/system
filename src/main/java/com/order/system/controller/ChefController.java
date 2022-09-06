@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.order.system.service.WelcomeService;
 
 @Controller
@@ -17,10 +19,10 @@ public class ChefController {
 	
 
 	@GetMapping(value = {"","/","/home"})
-	public String chef(Model model){
+	public String chef(Model model) throws JsonProcessingException{
 		model.addAttribute("orders", welcomeService.getAllOrders());
-
-		return "chef-dashboard";
+		model.addAttribute("isFromChef", true);
+		return "main-dashboard";
 		
 	}
 	

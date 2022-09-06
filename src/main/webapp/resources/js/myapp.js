@@ -20,6 +20,71 @@ $('#exampleModal').on('show.bs.modal', function (event) {
   
 })
 
+$('#deleteItemModal').on('show.bs.modal', function (event) {
+  var div = $(event.relatedTarget) // Button that triggered the modal
+  var id = div.data('id')
+  var modal = $(this)
+  
+  var deleteUrl = "/admin/item/delete/" + id
+  var aTagDelete = modal.find('.modal-footer .delete-link')
+  aTagDelete.attr('href', deleteUrl)
+  
+})
+
+$('#ModalEditForm').on('show.bs.modal', function (event) {
+  var div = $(event.relatedTarget) // Button that triggered the modal
+  var id = div.data('id')
+  var title = div.data('title')
+  var price = div.data('price')
+  var summary = div.data('summary')
+  var img = div.data('img')
+  var menuName = div.data('menu')
+  
+  var editItemUrl = "/admin/edit/item/" + id
+  
+  var modal = $(this)
+  
+  var formTag = modal.find(".modal-body .edit-item-form");
+  formTag.attr('action', editItemUrl)
+  
+  $(".modal-body #title").val( title );
+  $(".modal-body #price").val( price );
+  $(".modal-body #summary").val( summary );
+  $(".modal-body #menu").val( menuName );
+  $(".modal-body #img").val( img );
+  
+})
+
+$('#view-order-modal').on('show.bs.modal', function (event) {
+  var div = $(event.relatedTarget) // Button that triggered the modal
+  var fname = div.data('fname')
+  var lname = div.data('lname')
+  var items = div.data('items')
+  var orderId = div.data('id')
+  
+  var modal = $(this)
+  
+  modal.find('.modal-title').html(fname + " " + lname)
+  var txt = "";
+  items = items.split("title=");
+  
+  for (i = 1; i < items.length; i++) {
+	  var orderName = items[i].substr(0, items[i].indexOf(','));
+	  
+	  var countStr = items[i].split('count=')[1];
+	  var count = countStr.substr(0, countStr.indexOf(','));
+	  txt = txt + '<div class="row"><div class="col-6"><h4>' + orderName + ' ' + '(' + count + ')</h4></div></div>';
+  }
+  
+  modal.find('.modal-body').html(txt)
+  
+  var viewOrderUrl = "/chef/order/" + orderId
+  
+  var aTagViewOrder = modal.find('.modal-footer .view-order-button')
+  aTagViewOrder.attr('href', viewOrderUrl)
+  
+})
+
 $(document).on("click", '.cart-link', function(e) {
                 e.preventDefault();
                 $.ajax({

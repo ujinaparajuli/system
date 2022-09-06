@@ -132,3 +132,67 @@ body {
 .modal-footer {
   padding-top: 0rem;
 }
+
+.order-row {
+	height: 50px;
+	background-color: #e7ecec;
+	margin-top: 10px;
+	width: 400px;
+	margin-left: 140px;
+	align-content: center;
+}
+
+.create-new-item {
+	margin-bottom: 10px;
+}
+
+.table-users {
+	margin-top: 20px;
+}
+
+
+
+.login-container {
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 200px;
+    padding-left: 15px;
+    width: 100%;
+}
+
+.form-signin {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+
+
+.form-signin .form-signin-heading, .form-signin .checkbox {
+    margin-bottom: 10px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    -webkit-clip-path: inset(50%);
+    clip-path: inset(50%);
+    border: 0;
+}
+
+.main-nav-row{
+	width: 100%;
+	height: 55px;
+	align-items: center;
+	font-size: large;
+}
+
+.item-card{
+	width: 18rem;
+	height: 6rem;
+}
+

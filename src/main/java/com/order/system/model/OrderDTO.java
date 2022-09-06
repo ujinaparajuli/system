@@ -59,6 +59,4 @@ public class OrderDTO {
 	public void setItems(List<cartDTO> items) {
 		this.items = items;
 	}
-	
-
 }

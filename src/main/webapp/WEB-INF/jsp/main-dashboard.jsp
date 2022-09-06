@@ -25,6 +25,18 @@
   <c:if test = "${isCheckOutNavBar}">
   	<%@include file="./main-navbar-checkout.jsp"%>
   </c:if>
+  
+  <c:if test = "${isFromChef}">
+  	<%@include file="./main-navbar-chef.jsp"%>
+  </c:if>
+  
+  <c:if test = "${isFromAdmin}">
+  	<%@include file="./main-navbar-admin.jsp"%>
+  </c:if>
+  
+  <c:if test = "${isFromLogin}">
+  	<%@include file="./main-navbar-login.jsp"%>
+  </c:if>
 
     <div class="container-fluid">
       <div class="row">

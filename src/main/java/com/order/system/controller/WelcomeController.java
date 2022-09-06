@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.tomcat.util.http.fileupload.MultipartStream.ItemInputStream;
@@ -17,6 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -25,9 +29,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.order.system.entity.Item;
 import com.order.system.entity.User;
@@ -50,14 +56,6 @@ public class WelcomeController {
 		model.addAttribute("isDashboardContainer", true);
 		model.addAttribute("isDashboardNavBar", true);
 		model.addAttribute("isDashboardSideBar", true);
-		String isFromChekout = (String) request.getAttribute("isCheckoutSuccessful");
-		if( isFromChekout != null && isFromChekout.equalsIgnoreCase("true")) {
-			System.out.println(isFromChekout);
-			model.addAttribute("isCheckoutSuccessful", true);
-		}else {
-			System.out.println(isFromChekout);
-			model.addAttribute("isCheckoutSuccessful", false);
-		}
 		return "main-dashboard";
 	}
 	
@@ -153,14 +151,15 @@ public class WelcomeController {
 	}
 	
 	@PostMapping("/postcheckout")
-	public String postcheckout(RedirectAttributes redirectAttributes, HttpServletRequest request, @ModelAttribute("checkout") Checkout checkout) {
+	public RedirectView postcheckout(RedirectAttributes redirectAttributes, HttpServletRequest request, @ModelAttribute("checkout") Checkout checkout) {
 		List<ItemCart> itemsInSession = (List<ItemCart>) request.getSession().getAttribute("CART_SESSION");
 		welcomeService.postCheckout(checkout,itemsInSession);
 		request.getSession().invalidate();
 		
-		request.setAttribute("isCheckoutSuccessful", "true");
 		
-        return "redirect:/";
+		RedirectView redirectView= new RedirectView("/",true);
+		redirectAttributes.addFlashAttribute("isCheckoutSuccessful",true);
+	    return redirectView;
 		
 	}
 	
@@ -176,4 +175,26 @@ public class WelcomeController {
 		
 		return "main-dashboard";
 	}
+	
+	@GetMapping(value="/logout")
+	public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null){    
+	        new SecurityContextLogoutHandler().logout(request, response, auth);
+	    }
+	    return "redirect:/";
+	}
+	
+	@GetMapping(value = "/login")
+    public String login(Model model, String error, String logout) {
+        if (error != null)
+            model.addAttribute("errorMsg", "Your username and password are invalid.");
+
+        if (logout != null)
+            model.addAttribute("msg", "You have been logged out successfully.");
+        
+        model.addAttribute("isFromLogin", true);
+
+        return "main-dashboard";
+    }
 }
