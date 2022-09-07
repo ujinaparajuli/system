@@ -18,7 +18,6 @@
               <th scope="col">Price</th>
               <th scope="col">Qty</th>
               <th scope="col">Total</th>
-              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody id="t-body">
