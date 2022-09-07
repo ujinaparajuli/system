@@ -2,9 +2,14 @@ package com.order.system.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -408,4 +413,60 @@ public class WelcomeServiceImpl implements WelcomeService{
 			}
 		}		
 	}
+
+	@Override
+	public List<Item> getMostPopularItems() {
+		List<Cart> allCart = cartDao.findAll();
+		Map<Long, Integer> map = new HashMap<Long, Integer>();
+		for(Cart cart : allCart) {
+			Long itemId = cart.getItemId();
+			if(map.containsKey(itemId)) {
+				map.put(itemId, map.get(itemId) + cart.getCount());
+			}else {
+				map.put(itemId, cart.getCount());
+			}
+		}
+		map = sortByValue(map);
+		Iterator<Map.Entry<Long,Integer>> iterator = map.entrySet().iterator();
+		
+		List<Item> items = new ArrayList<Item>();
+		int counter = 0;
+		while(iterator.hasNext()) {
+			if(counter >5)
+				break;
+			Map.Entry<Long,Integer> entry = iterator.next();
+			Long key = entry.getKey();
+			if(itemDao.findById(key).isPresent()) {
+				items.add(itemDao.findById(key).get());
+				counter++;
+			}
+		}
+		
+		
+		return items;
+	}
+	
+	
+	// function to sort hashmap by values
+    private HashMap<Long, Integer> sortByValue(Map<Long, Integer> hm)
+    {
+    	List<Map.Entry<Long, Integer> > list =
+                new LinkedList<Map.Entry<Long, Integer> >(hm.entrySet());
+    	
+    	Collections.sort(list, new Comparator<Map.Entry<Long, Integer>>() {
+
+			@Override
+			public int compare(Map.Entry<Long, Integer> o1,
+                    Map.Entry<Long, Integer> o2) {
+				return (o2.getValue()).compareTo(o1.getValue());
+			}
+		});
+         
+        // put data from sorted list to hashmap
+        HashMap<Long, Integer> temp = new LinkedHashMap<Long, Integer>();
+        for (Map.Entry<Long, Integer> aa : list) {
+            temp.put(aa.getKey(), aa.getValue());
+        }
+        return temp;
+    }
 }

@@ -60,19 +60,18 @@
 
           <div class="my-3">
             <div class="form-check">
-            	<form:radiobutton path="paymentMethod" value="Credit card"/>Credit card
+            	<form:radiobutton id="credit-card-radio" path="paymentMethod" value="Credit card"/>Card
              
             </div>
+            
             <div class="form-check">
-            	<form:radiobutton path="paymentMethod" value="Debit card"/>Debit card
-             
-            </div>
-            <div class="form-check">
-            	<form:radiobutton path="paymentMethod" value="Cash"/>Cash
+            	<form:radiobutton id="cash-radio" path="paymentMethod" value="Cash"/>Cash
               
             </div>
           </div>
-
+          
+          <div class="card-form">
+          </div>
 
           <hr class="my-4">
           
