@@ -196,3 +196,19 @@ body {
 	height: 6rem;
 }
 
+
+.d-block {
+  width: 100%;
+}
+.carousel-inner{
+  width:100%;
+  max-height: 400px !important;
+}
+
+
+.main-dashboard-container{
+	margin-top: 20px;
+}
+
+
+

@@ -56,6 +56,7 @@ public class WelcomeController {
 		model.addAttribute("isDashboardContainer", true);
 		model.addAttribute("isDashboardNavBar", true);
 		model.addAttribute("isDashboardSideBar", true);
+		model.addAttribute("popularItems", welcomeService.getMostPopularItems());
 		return "main-dashboard";
 	}
 	

@@ -42,5 +42,9 @@ public interface WelcomeService {
 	public void editItemAdmin(AdminViewDTO item, Long itemId);
 	
 	
+	//most popular
+	
+	public List<Item> getMostPopularItems();
+	
 
 }

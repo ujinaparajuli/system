@@ -8,7 +8,9 @@
 
 </c:if>
 
-<div class="row">
+<%@include file="./popular-item-carousel.jsp"%>
+
+<div class="row main-dashboard-container">
 	<c:forEach items="${foodItems}" var="foodItem">
 	
 		<div class="card item-card mb-4 ml-5" data-toggle="modal" data-target="#exampleModal" data-id="${foodItem.id}" data-title="${foodItem.title}" data-summary="${foodItem.summary}" data-price="${foodItem.price}" data-img="${foodItem.img}" style="cursor: pointer;">
