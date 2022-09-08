@@ -1,6 +1,6 @@
 <c:if test = "${isCheckoutSuccessful}">
 		<div class="alert alert-primary alert-dismissible fade show" role="alert">
-		  Checkout is successful, Please wait for your order. Once order is ready we will mail you.
+		  Checkout is successful, Please wait for your order.Once order is ready we will mail you.Your order no is ${orderId}.
 		  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
 		    <span aria-hidden="true">&times;</span>
 		  </button>

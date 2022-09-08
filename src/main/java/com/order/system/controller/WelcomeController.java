@@ -144,7 +144,7 @@ public class WelcomeController {
 		
 		Viewcart viewCart = getViewCart(itemsInSession);
 		
-		model.addAttribute("total", viewCart.getGrandTotal());
+		model.addAttribute("total", viewCart.getGrandtotalWithTax());
 		model.addAttribute("checkout", new Checkout());
 		model.addAttribute("isCheckoutContainer", true);
 		model.addAttribute("isCheckOutNavBar", true);
@@ -154,12 +154,13 @@ public class WelcomeController {
 	@PostMapping("/postcheckout")
 	public RedirectView postcheckout(RedirectAttributes redirectAttributes, HttpServletRequest request, @ModelAttribute("checkout") Checkout checkout) {
 		List<ItemCart> itemsInSession = (List<ItemCart>) request.getSession().getAttribute("CART_SESSION");
-		welcomeService.postCheckout(checkout,itemsInSession);
+		Long orderId= welcomeService.postCheckout(checkout,itemsInSession);
 		request.getSession().invalidate();
 		
 		
 		RedirectView redirectView= new RedirectView("/",true);
 		redirectAttributes.addFlashAttribute("isCheckoutSuccessful",true);
+		redirectAttributes.addFlashAttribute("orderId",orderId);
 	    return redirectView;
 		
 	}

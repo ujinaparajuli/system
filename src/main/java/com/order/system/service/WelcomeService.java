@@ -27,7 +27,7 @@ public interface WelcomeService {
 	public List<String> getAllMenuCategory();
 	public List<Item> getFoodItemFromCategory(String category);
 	
-	public Boolean postCheckout(Checkout checkout, List<ItemCart> itemsInSession);
+	public Long postCheckout(Checkout checkout, List<ItemCart> itemsInSession);
 	public void cashCheckout(Long orderId);
 	
 	
