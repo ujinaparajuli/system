@@ -13,11 +13,6 @@
         </a>
       </li>
       </c:forEach>
-      <li class="nav-item">
-      <a class="nav-link" href="<spring:url value="/category/today-special"/>">
-          Todays Special
-        </a>
-      </li>
     </ul>
   </div>
 </nav>
