@@ -104,6 +104,37 @@ public class WelcomeController {
 		return "redirect:/";
 	}
 	
+	@GetMapping("/add/{itemId}/{count}")
+	public ResponseEntity addToCartIncreaseDecrease(@PathVariable("itemId") Long itemId, @PathVariable("count") int count, Model model, HttpServletRequest request) {		
+		List<ItemCart> itemsInSession = (List<ItemCart>) request.getSession().getAttribute("CART_SESSION");
+		
+		for(ItemCart itemCart : itemsInSession) {
+			if(itemId.longValue() == itemCart.getItemId().longValue()) {
+				itemCart.setItemCount(count);
+				break;
+			}
+		}
+		
+		request.getSession().setAttribute("CART_SESSION", itemsInSession);
+				
+		Viewcart viewCart = getViewCart(itemsInSession);
+		
+		return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
+	}
+	
+	@GetMapping("/delete/{itemId}")
+	public ResponseEntity deleteItemFromCart(@PathVariable("itemId") Long itemId, Model model, HttpServletRequest request) {		
+		List<ItemCart> itemsInSession = (List<ItemCart>) request.getSession().getAttribute("CART_SESSION");
+		
+		itemsInSession.removeIf(obj -> obj.getItemId().longValue() == itemId.longValue());
+		
+		request.getSession().setAttribute("CART_SESSION", itemsInSession);
+				
+		Viewcart viewCart = getViewCart(itemsInSession);
+		
+		return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
+	}
+	
 	@GetMapping("/cart/view")
 	public ResponseEntity viewCart(HttpSession session) {
 		Viewcart viewCart = new Viewcart();
