@@ -170,7 +170,7 @@ public class WelcomeServiceImpl implements WelcomeService{
 	}
 
 	@Override
-	public Boolean postCheckout(Checkout checkoutDto, List<ItemCart> itemsInSession) {
+	public Long postCheckout(Checkout checkoutDto, List<ItemCart> itemsInSession) {
 		User user = new User();
 		user.setEmail(checkoutDto.getEmail());
 		user.setFirstName(checkoutDto.getFirstName());
@@ -204,7 +204,7 @@ public class WelcomeServiceImpl implements WelcomeService{
 		}
 		
 		sendNotificationToChef(order.getId());
-		return true;
+		return order.getId();
 	}
 
 	private void sendNotificationToChef(Long orderId) {
