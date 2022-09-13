@@ -41,6 +41,7 @@ import com.order.system.model.Checkout;
 import com.order.system.model.ItemCart;
 import com.order.system.model.Message;
 import com.order.system.model.OutputMessage;
+import com.order.system.model.ReviewDTO;
 import com.order.system.model.Viewcart;
 import com.order.system.model.cartDTO;
 import com.order.system.service.WelcomeService;
@@ -228,6 +229,12 @@ public class WelcomeController {
         
         model.addAttribute("isFromLogin", true);
 
+        return "main-dashboard";
+    }
+	
+	@PostMapping(value = "/review/{itemId}/{userId}")
+    public String addReview(Model model, @PathVariable("itemId") Long itemId, @PathVariable("userId") Long userId, @ModelAttribute("review") ReviewDTO review) {
+		welcomeService.addReview(itemId, userId, review);
         return "main-dashboard";
     }
 }

@@ -5,6 +5,7 @@ $('#exampleModal').on('show.bs.modal', function (event) {
   var price = div.data('price')
   var summary = div.data('summary')
   var img = div.data('img')
+  var review = div.data('review')
   // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
   // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
   var modal = $(this)
@@ -18,7 +19,15 @@ $('#exampleModal').on('show.bs.modal', function (event) {
   imgTag.attr('src', imgUrl);
   formTag.attr('action', addToCarturl)
   
+  var stars = $('span.stars');
+  stars.html($('<span />').width(Math.max(0, (Math.min(5, parseFloat(review)))) * 40));
 })
+
+//$.fn.stars = function() {
+//  return $(this).each(function() {
+//    $(this).html($('<span />').width(Math.max(0, (Math.min(5, parseFloat(2)))) * 40));
+//  });
+//}
 
 $('#deleteItemModal').on('show.bs.modal', function (event) {
   var div = $(event.relatedTarget) // Button that triggered the modal

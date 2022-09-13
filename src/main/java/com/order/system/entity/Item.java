@@ -28,6 +28,9 @@ public class Item {
 	
 	private String img;
 	
+	@Column(name="avg_review")
+	private Double avgReview;
+	
 	@Column(name="menu_id")
 	private Long menuId;
 
@@ -94,9 +97,12 @@ public class Item {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-	
-	
-	
-	
-		
+
+	public Double getAvgReview() {
+		return avgReview;
+	}
+
+	public void setAvgReview(Double avgReview) {
+		this.avgReview = avgReview;
+	}	
 }

@@ -26,17 +26,20 @@ import com.order.system.dao.CartDao;
 import com.order.system.dao.ItemDao;
 import com.order.system.dao.MenuDao;
 import com.order.system.dao.OrderDao;
+import com.order.system.dao.ReviewDao;
 import com.order.system.dao.UserDao;
 import com.order.system.entity.Cart;
 import com.order.system.entity.Item;
 import com.order.system.entity.Menu;
 import com.order.system.entity.Order;
+import com.order.system.entity.Review;
 import com.order.system.entity.User;
 import com.order.system.model.AdminViewDTO;
 import com.order.system.model.Checkout;
 import com.order.system.model.ItemCart;
 import com.order.system.model.OrderDTO;
 import com.order.system.model.OutputMessage;
+import com.order.system.model.ReviewDTO;
 import com.order.system.model.cartDTO;
 import com.order.system.service.WelcomeService;
 
@@ -57,6 +60,9 @@ public class WelcomeServiceImpl implements WelcomeService{
 	
 	@Autowired
 	OrderDao orderDao;
+	
+	@Autowired
+	ReviewDao reviewDao;
 	
 	@Autowired
 	SimpMessagingTemplate messagingTemplate;
@@ -469,4 +475,25 @@ public class WelcomeServiceImpl implements WelcomeService{
         }
         return temp;
     }
+
+	@Override
+	public boolean addReview(Long itemId, Long userId, ReviewDTO reviewDto) {
+		
+		Review review = reviewDao.findByItemIdAndUserId(itemId, userId).get(0);
+		
+		if(review == null) {
+			Review newReview = new Review();
+			newReview.setItemId(itemId);
+			newReview.setUserId(userId);
+			newReview.setReviewText(reviewDto.getText());
+			newReview.setReviewCount(reviewDto.getCount());
+			
+			reviewDao.save(newReview);
+		}else {
+			review.setReviewCount(reviewDto.getCount());
+			review.setReviewText(reviewDto.getText());
+			reviewDao.save(review);
+		}
+		return true;
+	}
 }

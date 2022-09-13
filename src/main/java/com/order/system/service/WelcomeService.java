@@ -2,6 +2,7 @@ package com.order.system.service;
 
 import java.util.List;
 
+import com.order.system.dao.ReviewDao;
 import com.order.system.entity.Cart;
 import com.order.system.entity.Item;
 import com.order.system.entity.User;
@@ -9,6 +10,7 @@ import com.order.system.model.AdminViewDTO;
 import com.order.system.model.Checkout;
 import com.order.system.model.ItemCart;
 import com.order.system.model.OrderDTO;
+import com.order.system.model.ReviewDTO;
 import com.order.system.model.cartDTO;
 
 public interface WelcomeService {
@@ -45,6 +47,10 @@ public interface WelcomeService {
 	//most popular
 	
 	public List<Item> getMostPopularItems();
+	
+	//review
+	
+	public boolean addReview(Long itemId, Long userId, ReviewDTO reviewDto);
 	
 
 }

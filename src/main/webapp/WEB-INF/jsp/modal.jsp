@@ -20,6 +20,9 @@
 		<div class="row">
 		
 			<div class="col-6">
+				<div class="review-container">
+				  <span class="stars"></span>
+				</div>
 			</div>
 			<div class="col-6">
 				<h4>Price: NRs <strong id="price"></strong></h4>
