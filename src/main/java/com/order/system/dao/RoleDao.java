@@ -8,12 +8,9 @@ import org.springframework.stereotype.Repository;
 import com.order.system.entity.Cart;
 import com.order.system.entity.Chef;
 import com.order.system.entity.Item;
+import com.order.system.entity.Role;
 
 @Repository
-public interface CartDao extends JpaRepository<Cart, Long> {
- List<Cart> findByItemId(Long itemId);
-  
- List<Cart> findByOrderIdAndUserId(Long orderId, Long userId);
- 
- List<Cart> findByOrderId(Long orderId);
+public interface RoleDao extends JpaRepository<Role, Long> {
+	Role findByName(String name);
 }

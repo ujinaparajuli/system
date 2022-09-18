@@ -19,20 +19,19 @@ public class Cart {
 	
 	private int count;
 	
-	@Column(name="session_id")
-	private String sessionId;
+	@Column(name="user_id")
+	private Long userId;
 	
 	@Column(name="order_id")
 	private Long orderId;
 	
-	
 
-	public String getSessionId() {
-		return sessionId;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public int getCount() {

@@ -171,6 +171,13 @@ body {
     margin-bottom: 10px;
 }
 
+.sign-up {
+	max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+
 .sr-only {
     position: absolute;
     width: 1px;

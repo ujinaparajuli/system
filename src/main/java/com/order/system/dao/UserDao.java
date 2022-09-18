@@ -9,5 +9,5 @@ import com.order.system.entity.User;
 
 @Repository
 public interface UserDao extends JpaRepository<User, Long>{	
-	List<User> findAll();
+	User findByEmail(String email);
 }

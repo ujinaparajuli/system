@@ -11,12 +11,13 @@ import com.order.system.model.Checkout;
 import com.order.system.model.ItemCart;
 import com.order.system.model.OrderDTO;
 import com.order.system.model.ReviewDTO;
+import com.order.system.model.SignUp;
 import com.order.system.model.cartDTO;
 
 public interface WelcomeService {
 	public List<Item> getFoodItems();
 	public Item getItem(Long id);
-	public void addToCart(Long itemId, String sessionId);
+//	public void addToCart(Long itemId, String sessionId);
 	public List<cartDTO> viewCart(List<ItemCart> itemsInSession);
 	public void checkout(Double grandTotal);
 	
@@ -51,6 +52,14 @@ public interface WelcomeService {
 	//review
 	
 	public boolean addReview(Long itemId, Long userId, ReviewDTO reviewDto);
+	
+	//sign up
+	public boolean signUpService(SignUp signUp);
+	
+	
+	public boolean saveCartSession(List<ItemCart> itemcarts);
+	
+	public List<ItemCart> getItemCarts(String userName);
 	
 
 }

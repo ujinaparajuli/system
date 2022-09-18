@@ -2,6 +2,7 @@ package com.order.system.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -16,23 +17,31 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.order.system.dao.CartDao;
 import com.order.system.dao.ItemDao;
 import com.order.system.dao.MenuDao;
 import com.order.system.dao.OrderDao;
 import com.order.system.dao.ReviewDao;
+import com.order.system.dao.RoleDao;
 import com.order.system.dao.UserDao;
 import com.order.system.entity.Cart;
 import com.order.system.entity.Item;
 import com.order.system.entity.Menu;
 import com.order.system.entity.Order;
 import com.order.system.entity.Review;
+import com.order.system.entity.Role;
 import com.order.system.entity.User;
 import com.order.system.model.AdminViewDTO;
 import com.order.system.model.Checkout;
@@ -40,9 +49,11 @@ import com.order.system.model.ItemCart;
 import com.order.system.model.OrderDTO;
 import com.order.system.model.OutputMessage;
 import com.order.system.model.ReviewDTO;
+import com.order.system.model.SignUp;
 import com.order.system.model.cartDTO;
 import com.order.system.service.WelcomeService;
 
+@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Service
 public class WelcomeServiceImpl implements WelcomeService{
 	
@@ -65,18 +76,20 @@ public class WelcomeServiceImpl implements WelcomeService{
 	ReviewDao reviewDao;
 	
 	@Autowired
+	RoleDao roleDao;;
+	
+	@Autowired
 	SimpMessagingTemplate messagingTemplate;
 	
 	@Autowired
     JavaMailSender javaMailSender;
+	
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	@Override
 	public List<Item> getFoodItems() {
 		return itemDao.findAll();
-	}
-
-	public List<User> getUsers() {
-		return userDao.findAll();
 	}
 	
 
@@ -115,41 +128,41 @@ public class WelcomeServiceImpl implements WelcomeService{
 		
 	}
 
-	@Override
-	public void addToCart(Long itemId, String sessionId) {
-		List<Cart> carts = cartDao.findBySessionId(sessionId);
-		int count = 0;
-		for(Cart cart : cartDao.findBySessionId(sessionId)) {
-			if(itemId.equals(cart.getItemId())) {
-				cart.setCount(cart.getCount() + 1);
-				cartDao.save(cart);
-				count++;
-				break;
-			}
-		}
-		
-		if(count == carts.size()) {
-			Cart cart = new Cart();
-			cart.setItemId(itemId);
-			cart.setCount(1);
-			cart.setSessionId(sessionId);
-			cartDao.save(cart);
-		}
-//		List<Cart> carts = cartDao.findByItemId(itemId);
-//		if(carts != null && ! carts.isEmpty()) {
-//			Cart cart = carts.get(0);
-//			cart.setCount(cart.getCount() + 1);
-//			cart.setSessionId(sessionId);
-//			cartDao.save(cart);
-//		}else {
+//	@Override
+//	public void addToCart(Long itemId, String sessionId) {
+//		List<Cart> carts = cartDao.findBySessionId(sessionId);
+//		int count = 0;
+//		for(Cart cart : cartDao.findBySessionId(sessionId)) {
+//			if(itemId.equals(cart.getItemId())) {
+//				cart.setCount(cart.getCount() + 1);
+//				cartDao.save(cart);
+//				count++;
+//				break;
+//			}
+//		}
+//		
+//		if(count == carts.size()) {
 //			Cart cart = new Cart();
 //			cart.setItemId(itemId);
 //			cart.setCount(1);
 //			cart.setSessionId(sessionId);
 //			cartDao.save(cart);
 //		}
-		
-	}
+////		List<Cart> carts = cartDao.findByItemId(itemId);
+////		if(carts != null && ! carts.isEmpty()) {
+////			Cart cart = carts.get(0);
+////			cart.setCount(cart.getCount() + 1);
+////			cart.setSessionId(sessionId);
+////			cartDao.save(cart);
+////		}else {
+////			Cart cart = new Cart();
+////			cart.setItemId(itemId);
+////			cart.setCount(1);
+////			cart.setSessionId(sessionId);
+////			cartDao.save(cart);
+////		}
+//		
+//	}
 
 	@Override
 	public List<cartDTO> viewCart(List<ItemCart> ItemsInSession) {
@@ -177,12 +190,29 @@ public class WelcomeServiceImpl implements WelcomeService{
 
 	@Override
 	public Long postCheckout(Checkout checkoutDto, List<ItemCart> itemsInSession) {
-		User user = new User();
-		user.setEmail(checkoutDto.getEmail());
-		user.setFirstName(checkoutDto.getFirstName());
-		user.setLastName(checkoutDto.getLastName());
-		user.setMobile(checkoutDto.getMobile());
-		user = userDao.save(user);
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		
+		User user = null;
+		
+		if(auth.getPrincipal() instanceof String) {
+			user = new User();
+			user.setEmail(checkoutDto.getEmail());
+			user.setFirstName(checkoutDto.getFirstName());
+			user.setLastName(checkoutDto.getLastName());
+			user.setMobile(checkoutDto.getMobile());
+			user.setPassword("password");
+			user = userDao.save(user);
+		} else if(auth.getPrincipal() instanceof org.springframework.security.core.userdetails.User) {
+			org.springframework.security.core.userdetails.User springUser = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+			try {
+				user = userDao.findByEmail(springUser.getUsername());
+			} catch (Exception e) {
+				
+				System.out.println(e);
+				
+			}
+		}
 		
 		Order order = new Order();
 		order.setGrandTotal(checkoutDto.getTotal());
@@ -495,5 +525,86 @@ public class WelcomeServiceImpl implements WelcomeService{
 			reviewDao.save(review);
 		}
 		return true;
+	}
+
+	@Override
+	public boolean signUpService(SignUp signUp) {
+		User existingUser = userDao.findByEmail(signUp.getEmail());
+		
+        if(existingUser != null && existingUser.getEmail() != null && !existingUser.getEmail().isEmpty()){
+            return false;
+        }
+        
+        User user = new User();
+        user.setFirstName(signUp.getfName());
+        user.setLastName(signUp.getlName());
+        user.setEmail(signUp.getEmail());
+        
+        user.setPassword(passwordEncoder.encode(signUp.getConfirm()));
+        
+        user.setMobile(signUp.getMobile());
+        
+        Role role = roleDao.findByName("ROLE_USER");
+        if(role == null){
+            role = checkRoleExist();
+        }
+        
+        user.setRoles(Arrays.asList(role));
+        
+        userDao.save(user);
+        
+		return true;
+	}
+	
+	private Role checkRoleExist(){
+        Role role = new Role();
+        role.setName("ROLE_USER");
+        return roleDao.save(role);
+    }
+
+	@Override
+	public boolean saveCartSession(List<ItemCart> itemcarts) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		org.springframework.security.core.userdetails.User springUser = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+		User user = null;
+		try {
+			user = userDao.findByEmail(springUser.getUsername());
+		} catch (Exception e) {
+			
+			System.out.println(e);
+			
+		}
+		
+		if(itemcarts != null && !itemcarts.isEmpty()) {
+			for(ItemCart itemCart : itemcarts) {
+				Cart cart = new Cart();
+				cart.setItemId(itemCart.getItemId());
+				cart.setCount(itemCart.getItemCount());
+				cart.setUserId(1L);
+				
+				cartDao.save(cart);
+			}
+		}
+		
+		return true;
+	}
+
+	@Override
+	public List<ItemCart> getItemCarts(String userName) {
+		User user = userDao.findByEmail(userName);
+		List<ItemCart> items = new ArrayList<ItemCart>();
+		List<Cart> carts = cartDao.findByOrderIdAndUserId(null, user.getId());
+		if(carts != null && !carts.isEmpty()) {
+			for(Cart cart : carts) {
+				ItemCart itemcart = new ItemCart();
+				itemcart.setItemId(cart.getItemId());
+				itemcart.setItemCount(cart.getCount());
+				
+				items.add(itemcart);
+			}
+			return items;
+		}else {
+			return items;
+		}
 	}
 }
