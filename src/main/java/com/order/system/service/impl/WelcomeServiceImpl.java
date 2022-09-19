@@ -1,8 +1,10 @@
 package com.order.system.service.impl;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -27,9 +30,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.order.system.dao.CartDao;
+import com.order.system.dao.ImageDao;
 import com.order.system.dao.ItemDao;
 import com.order.system.dao.MenuDao;
 import com.order.system.dao.OrderDao;
@@ -37,6 +42,7 @@ import com.order.system.dao.ReviewDao;
 import com.order.system.dao.RoleDao;
 import com.order.system.dao.UserDao;
 import com.order.system.entity.Cart;
+import com.order.system.entity.Image;
 import com.order.system.entity.Item;
 import com.order.system.entity.Menu;
 import com.order.system.entity.Order;
@@ -52,6 +58,7 @@ import com.order.system.model.ReviewDTO;
 import com.order.system.model.SignUp;
 import com.order.system.model.cartDTO;
 import com.order.system.service.WelcomeService;
+import com.order.system.validator.ImageUtility;
 
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Service
@@ -76,7 +83,10 @@ public class WelcomeServiceImpl implements WelcomeService{
 	ReviewDao reviewDao;
 	
 	@Autowired
-	RoleDao roleDao;;
+	RoleDao roleDao;
+	
+	@Autowired
+	ImageDao imageDao;
 	
 	@Autowired
 	SimpMessagingTemplate messagingTemplate;
@@ -172,7 +182,9 @@ public class WelcomeServiceImpl implements WelcomeService{
 			cartDto.setCount(itemCart.getItemCount());
 			Item item = itemDao.findById(itemCart.getItemId()).get();
 			cartDto.setItemId(item.getId());
-			cartDto.setImg(item.getImg());
+			cartDto.setImage(item.getImage());
+			cartDto.setImageName(item.getImageName());
+			cartDto.setImageType(item.getImageType());
 			cartDto.setPrice(item.getPrice());
 			cartDto.setTitle(item.getTitle());
 			cartDto.setItemTotal(item.getPrice() * itemCart.getItemCount());
@@ -345,7 +357,7 @@ public class WelcomeServiceImpl implements WelcomeService{
 		for(Item item : items) {
 			AdminViewDTO adminview = new AdminViewDTO();
 			adminview.setItemId(item.getId());
-			adminview.setImg(item.getImg());
+//			adminview.setImg(item.getImg());
 			adminview.setMenuId(item.getMenuId());
 			adminview.setMenuName(getMenuNameFromId(item.getMenuId()));
 			adminview.setPrice(item.getPrice());
@@ -404,12 +416,27 @@ public class WelcomeServiceImpl implements WelcomeService{
 	@Transactional
 	@Override
 	public void addItemAdmin(AdminViewDTO adminView) {
+		
 		Item item = new Item();
-		item.setImg(adminView.getImg());
 		item.setPrice(adminView.getPrice());
 		item.setSummary(adminView.getSummary());
 		item.setTitle(adminView.getTitle());
 		item.setMenuId(getMenuIdFromName(adminView.getMenuName()));
+		try {
+			item.setImage(org.apache.tomcat.util.codec.binary.Base64.encodeBase64(adminView.getImg().getBytes()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String imageName = "";
+		try {
+			imageName = org.apache.tomcat.util.codec.binary.StringUtils.newStringUtf8(org.apache.tomcat.util.codec.binary.Base64.encodeBase64(adminView.getImg().getBytes(), false));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		item.setImageName(imageName);
+		item.setImageType(adminView.getImg().getContentType());
 		
 		itemDao.save(item);
 	}
@@ -432,7 +459,7 @@ public class WelcomeServiceImpl implements WelcomeService{
 		Optional<Item> opItem = itemDao.findById(itemId);
 		if(opItem.isPresent()) {
 			Item item = opItem.get();
-			item.setImg(adminView.getImg());
+//			item.setImg(adminView.getImg());
 			item.setPrice(adminView.getPrice());
 			item.setSummary(adminView.getSummary());
 			item.setTitle(adminView.getTitle());
@@ -452,34 +479,11 @@ public class WelcomeServiceImpl implements WelcomeService{
 
 	@Override
 	public List<Item> getMostPopularItems() {
-		List<Cart> allCart = cartDao.findAll();
-		Map<Long, Integer> map = new HashMap<Long, Integer>();
-		for(Cart cart : allCart) {
-			Long itemId = cart.getItemId();
-			if(map.containsKey(itemId)) {
-				map.put(itemId, map.get(itemId) + cart.getCount());
-			}else {
-				map.put(itemId, cart.getCount());
-			}
-		}
-		map = sortByValue(map);
-		Iterator<Map.Entry<Long,Integer>> iterator = map.entrySet().iterator();
+		List<Item> allItem = itemDao.findAll();
+		allItem.sort(Comparator.comparing(Item::getAvgReview).reversed());
+		List<Item> first5ItemsList = allItem.stream().limit(5).collect(Collectors.toList());
 		
-		List<Item> items = new ArrayList<Item>();
-		int counter = 0;
-		while(iterator.hasNext()) {
-			if(counter >5)
-				break;
-			Map.Entry<Long,Integer> entry = iterator.next();
-			Long key = entry.getKey();
-			if(itemDao.findById(key).isPresent()) {
-				items.add(itemDao.findById(key).get());
-				counter++;
-			}
-		}
-		
-		
-		return items;
+		return first5ItemsList;
 	}
 	
 	

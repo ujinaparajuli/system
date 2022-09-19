@@ -26,13 +26,45 @@ public class Item {
 	
 	private Double price;
 	
-	private String img;
-	
 	@Column(name="avg_review")
-	private Double avgReview;
+	private Double avgReview = 3.5;
 	
 	@Column(name="menu_id")
 	private Long menuId;
+	
+	@Column(name = "image_name")
+	private String imageName;
+
+	@Column(name = "image_type")
+	private String imageType;
+
+	@Column(name = "image", unique = false, nullable = true, length = 100000)
+	private byte[] image;
+	
+
+	public String getImageName() {
+		return imageName;
+	}
+
+	public void setImageName(String imageName) {
+		this.imageName = imageName;
+	}
+
+	public String getImageType() {
+		return imageType;
+	}
+
+	public void setImageType(String imageType) {
+		this.imageType = imageType;
+	}
+
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
 
 	public Long getMenuId() {
 		return menuId;
@@ -40,14 +72,6 @@ public class Item {
 
 	public void setMenuId(Long menuId) {
 		this.menuId = menuId;
-	}
-
-	public String getImg() {
-		return img;
-	}
-
-	public void setImg(String img) {
-		this.img = img;
 	}
 
 	public Long getId() {

@@ -1,12 +1,14 @@
 package com.order.system.model;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class AdminViewDTO {
 	private Long itemId;
 	private String title;
 	private String summary;
 	private String type;
 	private Double price;
-	private String img;
+	private MultipartFile img;
 	private Long menuId;
 	private String menuName;
 	
@@ -40,10 +42,10 @@ public class AdminViewDTO {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-	public String getImg() {
+	public MultipartFile getImg() {
 		return img;
 	}
-	public void setImg(String img) {
+	public void setImg(MultipartFile img) {
 		this.img = img;
 	}
 	public Long getMenuId() {

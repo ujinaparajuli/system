@@ -141,7 +141,6 @@ public class WelcomeController {
 	@GetMapping("/cart/view")
 	public ResponseEntity viewCart(HttpSession session) {
 		Viewcart viewCart = new Viewcart();
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		
 		List<ItemCart> itemsInSession;
 		
