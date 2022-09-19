@@ -10,19 +10,48 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.core.userdetails.User;
+
+import com.order.system.service.impl.CustomUserDetailsService;
+
+import javax.sql.DataSource;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	@Override
-	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication()
-			.withUser("admin").password("{noop}admin").roles("ADMIN")
-			.and()
-			.withUser("chef").password("{noop}chef").roles("CHEF");
-	}
+	
+	@Autowired
+    private DataSource dataSource;
+	
+	@Autowired
+	LoginSuccessHandler loginSuccessHandler;
+     
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new CustomUserDetailsService();
+    }
+     
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+     
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+         
+        return authProvider;
+    }
+ 
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider());
+    }
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
@@ -34,9 +63,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //			.permitAll()
 			.antMatchers("/admin", "/admin/**").hasRole("ADMIN")
 			.antMatchers("/chef", "/chef/**").hasRole("CHEF")
+			.antMatchers("/user", "/user/**").hasRole("USER")
 			.antMatchers("/**").permitAll()
 			.antMatchers(HttpMethod.POST,"/**").permitAll()
-			.and().formLogin().loginPage("/login").successHandler(new LoginSuccessHandler()).and().csrf().disable();
+			.and().formLogin().loginPage("/login").successHandler(loginSuccessHandler).and().logout().invalidateHttpSession(true).deleteCookies("JSESSIONID").and().csrf().disable();
 		
 //		http.sessionManagement()
 //			.and()

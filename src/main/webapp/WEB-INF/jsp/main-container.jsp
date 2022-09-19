@@ -20,4 +20,12 @@
 		 <%@include file="./login-container.jsp"%>
 	</c:if>
 	
+	<c:if test = "${isFromLoggedInUser}">
+		 <%@include file="./dashboard-container.jsp"%>
+	</c:if>
+	
+	<c:if test = "${isCheckoutContainerLoggedIn}">
+		 <%@include file="./main_checkout-user.jsp"%>
+	</c:if>
+	
 </main>

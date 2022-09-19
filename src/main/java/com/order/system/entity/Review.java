@@ -8,8 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="cart")
-public class Cart {
+@Table(name="review")
+public class Review {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -17,30 +17,14 @@ public class Cart {
 	@Column(name="item_id")
 	private Long itemId;
 	
-	private int count;
-	
 	@Column(name="user_id")
 	private Long userId;
 	
-	@Column(name="order_id")
-	private Long orderId;
+	@Column(name="review_text")
+	private String reviewText;
 	
-
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-
-	public int getCount() {
-		return count;
-	}
-
-	public void setCount(int count) {
-		this.count = count;
-	}
+	@Column(name="review_count")
+	private int reviewCount;
 
 	public Long getId() {
 		return id;
@@ -58,13 +42,27 @@ public class Cart {
 		this.itemId = itemId;
 	}
 
-	public Long getOrderId() {
-		return orderId;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setOrderId(Long orderId) {
-		this.orderId = orderId;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
-	
+	public String getReviewText() {
+		return reviewText;
+	}
+
+	public void setReviewText(String reviewText) {
+		this.reviewText = reviewText;
+	}
+
+	public int getReviewCount() {
+		return reviewCount;
+	}
+
+	public void setReviewCount(int reviewCount) {
+		this.reviewCount = reviewCount;
+	}
 }

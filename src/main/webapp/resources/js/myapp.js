@@ -5,6 +5,7 @@ $('#exampleModal').on('show.bs.modal', function (event) {
   var price = div.data('price')
   var summary = div.data('summary')
   var img = div.data('img')
+  var review = div.data('review')
   // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
   // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
   var modal = $(this)
@@ -18,7 +19,15 @@ $('#exampleModal').on('show.bs.modal', function (event) {
   imgTag.attr('src', imgUrl);
   formTag.attr('action', addToCarturl)
   
+  var stars = $('span.stars');
+  stars.html($('<span />').width(Math.max(0, (Math.min(5, parseFloat(review)))) * 40));
 })
+
+//$.fn.stars = function() {
+//  return $(this).each(function() {
+//    $(this).html($('<span />').width(Math.max(0, (Math.min(5, parseFloat(2)))) * 40));
+//  });
+//}
 
 $('#deleteItemModal').on('show.bs.modal', function (event) {
   var div = $(event.relatedTarget) // Button that triggered the modal
@@ -104,9 +113,9 @@ $(document).on("click", '.cart-link', function(e) {
                     	    		var price = json.cartDtos[i].price
                     	    		var count = json.cartDtos[i].count
                     	    		var total = json.cartDtos[i].itemTotal
+                    	    		var itemId = json.cartDtos[i].itemId
                     	    		
-                    	    		txt1 = txt1 + '<tr><td class="w-25"><img src="' + imgUrl + '" class="img-fluid img-thumbnail" alt="Sheep" height="80" width="80"></td><td>' + title + '</td><td>' + price + '</td><td class="qty">' + count + '</td><td>' + total + '</td></tr>'
-
+                    	    		txt1 = txt1 + '<tr><td class="w-25"><img src="' + imgUrl + '" class="img-fluid img-thumbnail" alt="Sheep" height="80" width="80"></td><td>' + title + '</td><td>' + price + '</td><td class="qty"><input id="quantity" type="number" value ="' + count + '" min="1" max="10" onchange="updateCart(' + itemId + ', this)"></td><td>' + total + '</td><td><button class="btn btn-danger btn-sm"><i class="fa fa-times" onclick="removeItemCart(' + itemId + ')"></i></button></td></tr>';
 //                    	    		txt1 = txt1 + '<tr><td class="w-25"><img src="' + imgUrl + '" class="img-fluid img-thumbnail" alt="Sheep"></td><td>' + title + '</td><td>' + price + '</td><td class="qty"><input type="text" class="form-control" id="input1" value="' + count + '"></td><td>' + total + '</td><td><a href="#" class="btn btn-danger btn-sm"><i class="fa fa-times"></i></a></td></tr>'  
                     	    		
                     	        }
@@ -128,6 +137,91 @@ $(document).on("click", '.cart-link', function(e) {
                 	  }   
                 	});
                 });
+
+
+function updateCart(itemId, count) {
+    $.ajax({
+    	url: '/add/' + itemId + '/' + count.value,
+        type: "GET",
+
+        // Function to call when to
+        // request is ok 
+        success: function (json) {
+        	if(Object.keys(json).length !== 0){
+    	    	var txt1 = "";          
+    	    	
+    	    	if(json.cartEmpty){
+    	    		txt1 = '<p>your cart is empty</p>'
+    	    	}else {
+    	    		for (var i = 0; i < json.cartDtos.length; i++){
+        	    		
+        	    		var imgUrl = '/resources/img/' + json.cartDtos[i].img + '.jpg'
+        	    		var title = json.cartDtos[i].title
+        	    		var price = json.cartDtos[i].price
+        	    		var count = json.cartDtos[i].count
+        	    		var total = json.cartDtos[i].itemTotal
+        	    		var itemId = json.cartDtos[i].itemId
+        	    		
+        	    		txt1 = txt1 + '<tr><td class="w-25"><img src="' + imgUrl + '" class="img-fluid img-thumbnail" alt="Sheep" height="80" width="80"></td><td>' + title + '</td><td>' + price + '</td><td class="qty"><input id="quantity" type="number" value ="' + count + '" min="1" max="10" onchange="updateCart(' + itemId + ', this )"></td><td>' + total + '</td><td><button class="btn btn-danger btn-sm"><i class="fa fa-times" onclick="removeItemCart(' + itemId + ')"></i></button></td></tr>';
+//        	    		txt1 = txt1 + '<tr><td class="w-25"><img src="' + imgUrl + '" class="img-fluid img-thumbnail" alt="Sheep"></td><td>' + title + '</td><td>' + price + '</td><td class="qty"><input type="text" class="form-control" id="input1" value="' + count + '"></td><td>' + total + '</td><td><a href="#" class="btn btn-danger btn-sm"><i class="fa fa-times"></i></a></td></tr>'  
+        	    		
+        	        }
+    	    		
+    	    		$('.modal-body .price').text("NRs " + json.grandtotalWithTax);
+    	    	}
+    	    	
+    	    	$('.modal-body #t-body').html(txt1);
+            }
+        },
+
+        // Error handling 
+        error: function (error) {
+            console.log(`Error ${error}`);
+        }
+    });
+}
+
+function removeItemCart(itemId) {
+    $.ajax({
+    	url: '/delete/' + itemId,
+        type: "GET",
+
+        // Function to call when to
+        // request is ok 
+        success: function (json) {
+        	if(Object.keys(json).length !== 0){
+    	    	var txt1 = "";          
+    	    	
+    	    	if(json.cartEmpty){
+    	    		txt1 = '<p>your cart is empty</p>'
+    	    	}else {
+    	    		for (var i = 0; i < json.cartDtos.length; i++){
+        	    		
+        	    		var imgUrl = '/resources/img/' + json.cartDtos[i].img + '.jpg'
+        	    		var title = json.cartDtos[i].title
+        	    		var price = json.cartDtos[i].price
+        	    		var count = json.cartDtos[i].count
+        	    		var total = json.cartDtos[i].itemTotal
+        	    		var itemId = json.cartDtos[i].itemId
+        	    		
+        	    		txt1 = txt1 + '<tr><td class="w-25"><img src="' + imgUrl + '" class="img-fluid img-thumbnail" alt="Sheep" height="80" width="80"></td><td>' + title + '</td><td>' + price + '</td><td class="qty"><input id="quantity" type="number" value ="' + count + '" min="1" max="10" onchange="updateCart(' + itemId + ', this )"></td><td>' + total + '</td><td><button class="btn btn-danger btn-sm"><i class="fa fa-times onclick="removeItemCart(' + itemId + ')""></i></button></td></tr>';
+//        	    		txt1 = txt1 + '<tr><td class="w-25"><img src="' + imgUrl + '" class="img-fluid img-thumbnail" alt="Sheep"></td><td>' + title + '</td><td>' + price + '</td><td class="qty"><input type="text" class="form-control" id="input1" value="' + count + '"></td><td>' + total + '</td><td><a href="#" class="btn btn-danger btn-sm"><i class="fa fa-times"></i></a></td></tr>'  
+        	    		
+        	        }
+    	    		
+    	    		$('.modal-body .price').text("NRs " + json.grandtotalWithTax);
+    	    	}
+    	    	
+    	    	$('.modal-body #t-body').html(txt1);
+            }
+        },
+
+        // Error handling 
+        error: function (error) {
+            console.log(`Error ${error}`);
+        }
+    });
+}
 
 $('#credit-card-radio').change(function() {
     if(this.checked) {

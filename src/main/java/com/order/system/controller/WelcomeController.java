@@ -37,10 +37,13 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.order.system.entity.Item;
 import com.order.system.entity.User;
+import com.order.system.model.AdminViewDTO;
 import com.order.system.model.Checkout;
 import com.order.system.model.ItemCart;
 import com.order.system.model.Message;
 import com.order.system.model.OutputMessage;
+import com.order.system.model.ReviewDTO;
+import com.order.system.model.SignUp;
 import com.order.system.model.Viewcart;
 import com.order.system.model.cartDTO;
 import com.order.system.service.WelcomeService;
@@ -71,7 +74,7 @@ public class WelcomeController {
 	}
 	
 	@PostMapping("/add/{itemId}")
-	public String addToCart(@PathVariable("itemId") Long itemId, Model model, HttpServletRequest request) {		
+	public String addToCart(@PathVariable("itemId") Long itemId, Model model, HttpServletRequest request) {
 		List<ItemCart> itemsInSession = (List<ItemCart>) request.getSession().getAttribute("CART_SESSION");
 		
 		if(itemsInSession == null || itemsInSession.isEmpty()) {
@@ -104,11 +107,45 @@ public class WelcomeController {
 		return "redirect:/";
 	}
 	
+	@GetMapping("/add/{itemId}/{count}")
+	public ResponseEntity addToCartIncreaseDecrease(@PathVariable("itemId") Long itemId, @PathVariable("count") int count, Model model, HttpServletRequest request) {		
+		List<ItemCart> itemsInSession = (List<ItemCart>) request.getSession().getAttribute("CART_SESSION");
+		
+		for(ItemCart itemCart : itemsInSession) {
+			if(itemId.longValue() == itemCart.getItemId().longValue()) {
+				itemCart.setItemCount(count);
+				break;
+			}
+		}
+		
+		request.getSession().setAttribute("CART_SESSION", itemsInSession);
+				
+		Viewcart viewCart = getViewCart(itemsInSession);
+		
+		return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
+	}
+	
+	@GetMapping("/delete/{itemId}")
+	public ResponseEntity deleteItemFromCart(@PathVariable("itemId") Long itemId, Model model, HttpServletRequest request) {		
+		List<ItemCart> itemsInSession = (List<ItemCart>) request.getSession().getAttribute("CART_SESSION");
+		
+		itemsInSession.removeIf(obj -> obj.getItemId().longValue() == itemId.longValue());
+		
+		request.getSession().setAttribute("CART_SESSION", itemsInSession);
+				
+		Viewcart viewCart = getViewCart(itemsInSession);
+		
+		return new ResponseEntity<Viewcart>(viewCart, HttpStatus.OK);
+	}
+	
 	@GetMapping("/cart/view")
 	public ResponseEntity viewCart(HttpSession session) {
 		Viewcart viewCart = new Viewcart();
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		
-		List<ItemCart> itemsInSession = (List<ItemCart>) session.getAttribute("CART_SESSION");
+		List<ItemCart> itemsInSession;
+		
+		itemsInSession = (List<ItemCart>) session.getAttribute("CART_SESSION");
 		
 		viewCart = getViewCart(itemsInSession);
 		
@@ -136,18 +173,33 @@ public class WelcomeController {
 		return viewCart;
 	}
 	
+//	@GetMapping("/checkout")
+//	public String preCheckOut() {
+//		
+//		return "main-dashboard";
+//	}
+	
 
-	@PostMapping("/checkout")
+	@GetMapping("/checkout")
 	public String checkout(HttpSession session, Model model) {
 
 		List<ItemCart> itemsInSession = (List<ItemCart>) session.getAttribute("CART_SESSION");
 		
 		Viewcart viewCart = getViewCart(itemsInSession);
 		
-		model.addAttribute("total", viewCart.getGrandtotalWithTax());
-		model.addAttribute("checkout", new Checkout());
-		model.addAttribute("isCheckoutContainer", true);
-		model.addAttribute("isCheckOutNavBar", true);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		
+		if(auth.getPrincipal() instanceof String) {
+			model.addAttribute("total", viewCart.getGrandtotalWithTax());
+			model.addAttribute("checkout", new Checkout());
+			model.addAttribute("isCheckoutContainer", true);
+			model.addAttribute("isCheckOutNavBar", true);
+		} else if(auth.getPrincipal() instanceof org.springframework.security.core.userdetails.User) {
+			model.addAttribute("isCheckoutContainerLoggedIn", true);
+			model.addAttribute("isCheckOutNavBarLoggedIn", true);
+			model.addAttribute("total", viewCart.getGrandtotalWithTax());
+			model.addAttribute("checkout", new Checkout());
+		}
 		return "main-dashboard";
 	}
 	
@@ -196,7 +248,22 @@ public class WelcomeController {
             model.addAttribute("msg", "You have been logged out successfully.");
         
         model.addAttribute("isFromLogin", true);
+        model.addAttribute("signup", new SignUp());
 
+        return "main-dashboard";
+    }
+	
+	@PostMapping(value = "/signup")
+    public String signup(Model model, @ModelAttribute("signup") SignUp signUp) {
+		
+		welcomeService.signUpService(signUp);
+		
+		return "redirect:/login";
+    }
+	
+	@PostMapping(value = "/review/{itemId}/{userId}")
+    public String addReview(Model model, @PathVariable("itemId") Long itemId, @PathVariable("userId") Long userId, @ModelAttribute("review") ReviewDTO review) {
+		welcomeService.addReview(itemId, userId, review);
         return "main-dashboard";
     }
 }

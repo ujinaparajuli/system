@@ -22,6 +22,10 @@
   	<%@include file="./main-navbar.jsp"%>
   </c:if>
   
+  <c:if test = "${isFromLoggedInUser}">
+  	<%@include file="./main-navbar-user.jsp"%>
+  </c:if>
+  
   <c:if test = "${isCheckOutNavBar}">
   	<%@include file="./main-navbar-checkout.jsp"%>
   </c:if>
@@ -37,10 +41,18 @@
   <c:if test = "${isFromLogin}">
   	<%@include file="./main-navbar-login.jsp"%>
   </c:if>
+  
+  <c:if test = "${isCheckOutNavBarLoggedIn}">
+  	<%@include file="./main-navbar-checkout-user.jsp"%>
+  </c:if>
 
     <div class="container-fluid">
       <div class="row">
         <c:if test = "${isDashboardSideBar}">
+        	<%@include file="./main-sidebar.jsp"%>
+        </c:if>
+        
+        <c:if test = "${isFromLoggedInUser}">
         	<%@include file="./main-sidebar.jsp"%>
         </c:if>
 		

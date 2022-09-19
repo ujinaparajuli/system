@@ -11,4 +11,16 @@
         </p>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       </form>
+      
+      <div class="sign-up">
+      <div>
+	      <button type="button" class="btn btn-link" data-toggle="modal" data-target="#ModalSignUpForm">
+			    Sign Up
+			</button>
+      </div>
+      <div>
+      	<a href="/checkout" class="link-primary">Continue As a Guest</a>
+      </div>
+	</div>
 </div>
+<%@include file="./sign-up-modal.jsp"%>

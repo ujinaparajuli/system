@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.order.system.entity.User;
+import com.order.system.entity.Review;
 
 @Repository
-public interface UserDao extends JpaRepository<User, Long>{	
-	User findByEmail(String email);
+public interface ReviewDao extends JpaRepository<Review, Long> {
+	
+	List<Review> findByItemIdAndUserId(Long itemId, Long userId);
+
 }
