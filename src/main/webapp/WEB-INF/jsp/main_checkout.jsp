@@ -16,11 +16,11 @@
     
      
      	<spring:url value="/postcheckout" var="postcheckout" />
-<form:form method="post" class="needs-validation" action="${postcheckout}" modelAttribute="checkout">
+<form:form method="post" name ="checkout-form" class="needs-validation" action="${postcheckout}" modelAttribute="checkout">
 	
 	<div class="row g-3">
         <div class="col-sm-6">
-          <form:label path="firstName" for="firstName" class="form-label">First name</form:label>
+          <form:label path="firstName" for="firstName" class="form-label" name="fname">First name</form:label>
           <form:input type="text" class="form-control" id="firstName" path="firstName" placeholder="" value="" />
           <div class="invalid-feedback">
             Valid first name is required.
@@ -28,7 +28,7 @@
         </div>
 
         <div class="col-sm-6">
-          <form:label path ="lastName" for="lastName" class="form-label">Last name</form:label>
+          <form:label path ="lastName" for="lastName" class="form-label" name="lname">Last name</form:label>
           <form:input type="text" class="form-control" id="lastName" path="lastName" placeholder="" value=""  />
           <div class="invalid-feedback">
             Valid last name is required.
@@ -45,7 +45,7 @@
         </div>
 
         <div class="col-12">
-          <form:label path="mobile" class="form-label">Mobile</form:label>
+          <form:label path="mobile" class="form-label" name="mobile">Mobile</form:label>
           <form:input type="text" class="form-control" id="mobile" path="mobile" placeholder="11111111"  />
           <div class="invalid-feedback">
             Please enter your mobile number.

@@ -1,5 +1,7 @@
 package com.order.system.model;
 
+import javax.persistence.Column;
+
 public class cartDTO {
 	private Long itemId;
 	
@@ -14,6 +16,44 @@ public class cartDTO {
 	private Double itemTotal;
 	
 	private Double grandTotal;
+	
+	private String imageName;
+
+	private String imageType;
+
+	private byte[] image;
+
+	public Double getGrandTotal() {
+		return grandTotal;
+	}
+
+	public void setGrandTotal(Double grandTotal) {
+		this.grandTotal = grandTotal;
+	}
+
+	public String getImageName() {
+		return imageName;
+	}
+
+	public void setImageName(String imageName) {
+		this.imageName = imageName;
+	}
+
+	public String getImageType() {
+		return imageType;
+	}
+
+	public void setImageType(String imageType) {
+		this.imageType = imageType;
+	}
+
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
 
 	public Long getItemId() {
 		return itemId;

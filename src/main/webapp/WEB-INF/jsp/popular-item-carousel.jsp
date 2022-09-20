@@ -16,8 +16,10 @@
 	    
 	    <c:if test = "${loop.index == 0}">
 			 <div class="carousel-item active">
-		        <img src="/resources/img/${popularItem.img}.jpg" class="d-block" alt="..." height="400">
-		        <div class="carousel-caption d-none d-md-block">
+			 	<img src="data:${popularItem.imageType};base64,${popularItem.imageName}" alt="Red dot" height="400" class="d-block" />
+<%-- 		        <img src="/resources/img/${popularItem.img}.jpg" class="d-block" alt="..." height="400">
+ --%>		        
+ 						<div class="carousel-caption d-none d-md-block">
 		          <h5>${popularItem.title}</h5>
 		          <p>${popularItem.summary}</p>
 		        </div>
@@ -26,8 +28,10 @@
 		
 		<c:if test = "${loop.index != 0}">
 			 <div class="carousel-item">
-		        <img src="/resources/img/${popularItem.img}.jpg" class="d-block alt="..." height="400">
-		        <div class="carousel-caption d-none d-md-block">
+			 <img src="data:${popularItem.imageType};base64,${popularItem.imageName}" alt="Red dot" height="400" class="d-block" />
+<%-- 		        <img src="/resources/img/${popularItem.img}.jpg" class="d-block alt="..." height="400">
+ --%>		        
+ 					<div class="carousel-caption d-none d-md-block">
 		          <h5>${popularItem.title}</h5>
 		          <p>${popularItem.summary}</p>
 		        </div>

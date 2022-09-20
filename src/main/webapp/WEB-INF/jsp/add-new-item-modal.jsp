@@ -5,7 +5,7 @@
                 <h1 class="modal-title">Add Item</h1>
             </div>
             <div class="modal-body">
-                <form:form role="form" method="POST" action="/admin/add/item" modelAttribute="addItem">
+                <form:form role="form" method="POST" action="/admin/add/item" modelAttribute="addItem" enctype="multipart/form-data">
                     <input type="hidden" name="_token" value="">
                     <div class="form-group">
                         <form:label class="control-label" path="title">Item Name</form:label>
@@ -29,8 +29,8 @@
                     <div class="form-group">
                         <form:label class="control-label" path="img">Image Name</form:label>
                         <div>
-                            <form:input type="text" class="form-control input-lg" name="img" path="img"></form:input>
-                        </div>
+                            <form:input type="file" class="form-control input-lg" name="img" path="img"></form:input>
+                        </div>                        
                     </div>
                     <div class="form-group">
                         <form:label class="control-label" path="price">Price</form:label>

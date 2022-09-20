@@ -27,12 +27,6 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <form:label class="control-label" path="img">Image Name</form:label>
-                        <div>
-                            <form:input type="text" class="form-control input-lg" name="img" id="img" path="img"></form:input>
-                        </div>
-                    </div>
-                    <div class="form-group">
                         <form:label class="control-label" path="price">Price</form:label>
                         <div>
                             <form:input type="text" class="form-control input-lg" name="price" id="price" path="price"></form:input>

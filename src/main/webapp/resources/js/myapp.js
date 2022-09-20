@@ -5,6 +5,7 @@ $('#exampleModal').on('show.bs.modal', function (event) {
   var price = div.data('price')
   var summary = div.data('summary')
   var img = div.data('img')
+  var imgType = div.data('imgType') 
   var review = div.data('review')
   // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
   // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
@@ -13,7 +14,7 @@ $('#exampleModal').on('show.bs.modal', function (event) {
   modal.find('.modal-title').html(title)
   modal.find('.modal-body #price').html(price)
   var imgTag = modal.find('.modal-body #image')
-  var imgUrl = "/resources/img/" + img + ".jpg"
+  var imgUrl = "data:" + imgType + ";base64," + img
   var addToCarturl = "/add/" + id
   var formTag = modal.find('.modal-footer .cart')
   imgTag.attr('src', imgUrl);
@@ -108,7 +109,8 @@ $(document).on("click", '.cart-link', function(e) {
                 	    	}else {
                 	    		for (var i = 0; i < json.cartDtos.length; i++){
                     	    		
-                    	    		var imgUrl = '/resources/img/' + json.cartDtos[i].img + '.jpg'
+//                    	    		var imgUrl = '/resources/img/' + json.cartDtos[i].img + '.jpg'
+                    	    		var imgUrl = "data:" + json.cartDtos[i].imageType + ";base64," + json.cartDtos[i].imageName
                     	    		var title = json.cartDtos[i].title
                     	    		var price = json.cartDtos[i].price
                     	    		var count = json.cartDtos[i].count
@@ -155,7 +157,8 @@ function updateCart(itemId, count) {
     	    	}else {
     	    		for (var i = 0; i < json.cartDtos.length; i++){
         	    		
-        	    		var imgUrl = '/resources/img/' + json.cartDtos[i].img + '.jpg'
+//        	    		var imgUrl = '/resources/img/' + json.cartDtos[i].img + '.jpg'
+        	    		var imgUrl = "data:" + json.cartDtos[i].imageType + ";base64," + json.cartDtos[i].imageName
         	    		var title = json.cartDtos[i].title
         	    		var price = json.cartDtos[i].price
         	    		var count = json.cartDtos[i].count
@@ -197,7 +200,8 @@ function removeItemCart(itemId) {
     	    	}else {
     	    		for (var i = 0; i < json.cartDtos.length; i++){
         	    		
-        	    		var imgUrl = '/resources/img/' + json.cartDtos[i].img + '.jpg'
+//        	    		var imgUrl = '/resources/img/' + json.cartDtos[i].img + '.jpg'
+        	    		var imgUrl = "data:" + json.cartDtos[i].imageType + ";base64," + json.cartDtos[i].imageName
         	    		var title = json.cartDtos[i].title
         	    		var price = json.cartDtos[i].price
         	    		var count = json.cartDtos[i].count
