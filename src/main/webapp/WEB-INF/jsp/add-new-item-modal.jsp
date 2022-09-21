@@ -35,7 +35,7 @@
                     <div class="form-group">
                         <form:label class="control-label" path="price">Price</form:label>
                         <div>
-                            <form:input type="text" class="form-control input-lg" name="price" path="price"></form:input>
+                            <form:input type="number" class="form-control input-lg" name="price" min="1" max="1000" path="price"></form:input>
                         </div>
                     </div>
                     <div class="form-group">
